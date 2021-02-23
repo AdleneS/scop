@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "__config": "c",
+        "__nullptr": "c",
+        "gl3w.h": "c",
+        "glfw3.h": "c"
+    }
+}
