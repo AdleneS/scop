@@ -6,19 +6,36 @@
 /*   By: asaba <asaba@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/21 14:48:56 by slopez            #+#    #+#             */
-/*   Updated: 2021/02/23 16:51:19 by asaba            ###   ########lyon.fr   */
+/*   Updated: 2021/02/25 16:50:24 by asaba            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "scop.h"
 #include "../gl3w/src/gl3w.c"
 
-int main(int argc, char *argv[])
+t_scop *init_struct()
 {
 	t_scop *scop;
 	if (!(scop = (t_scop *)(malloc(sizeof(t_scop)))))
-		return -1;
+		exit(1);
 
+	scop->pos.x = 0;
+	scop->pos.y = 0;
+	scop->pos.z = 0;
+	scop->rot.x = 0;
+	scop->rot.y = 0;
+	scop->rot.z = 0;
+	init_mat4(&scop->model);
+	init_mat4(&scop->view);
+	mat4x4_perspective(&scop->projection, 45.0, 1920.0f / 1080.0f, 0.1f, 1000.0f);
+	return scop;
+}
+
+int main(int argc, char *argv[])
+{
+	t_scop *scop = init_struct();
+	(void)argc;
+	(void)argv;
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
@@ -32,20 +49,59 @@ int main(int argc, char *argv[])
 	gl3wInit();
 
 	float vertices[] = {
-		// positions         // colors
-		-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom right
-		0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,  // bottom left
-		0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f,	  // top
-	};
+		-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 1.0f,
+		0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 1.0f,
+		0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 1.0f,
+		-0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
+
+		-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+		0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 1.0f,
+		0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f,
+		0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f,
+		-0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 1.0f,
+		-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+
+		-0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 1.0f,
+		-0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 1.0f,
+		-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+		-0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 1.0f,
+
+		0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 1.0f,
+		0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 1.0f,
+		0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 1.0f,
+		0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 1.0f,
+		0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+		0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 1.0f,
+
+		-0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 1.0f,
+		0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f,
+		0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 1.0f,
+		0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 1.0f,
+		-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 1.0f,
+
+		-0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 1.0f,
+		0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 1.0f,
+		0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 1.0f,
+		0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 1.0f,
+		-0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+		-0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 1.0f};
 	//Shaders
 	const char *vertexShaderSource = "#version 330 core\n"
 									 "layout (location = 0) in vec3 aPos;\n"
 									 "layout (location = 1) in vec3 aColor;\n"
 									 "out vec3 ourColor;\n"
+									 "uniform mat4 model;\n"
+									 "uniform mat4 view;\n"
+									 "uniform mat4 projection;\n"
 									 "uniform mat4 transform;\n"
 									 "void main()\n"
 									 "{\n"
-									 "   gl_Position = transform * vec4(aPos, 1.0);\n"
+									 "   gl_Position =  projection * view * model *  vec4(aPos, 1.0);\n"
 									 "   ourColor = aColor;\n"
 									 "}\0";
 
@@ -106,27 +162,56 @@ int main(int argc, char *argv[])
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 	glUseProgram(shaderProgram);
+	glEnable(GL_DEPTH_TEST);
 	while (!glfwWindowShouldClose(window))
 	{
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(window, GL_TRUE);
+		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+			scop->rot.x += 0.05;
+		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+			scop->rot.x -= 0.05;
+		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+			scop->rot.y += 0.05;
+		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+			scop->rot.y -= 0.05;
+		if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+			scop->rot.z += 0.05;
+		if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+			scop->rot.z -= 0.05;
+		if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+			scop->pos.x += 0.05;
+		if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+			scop->pos.x -= 0.05;
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		t_mat4 transform;
+		t_mat4 rotation;
 		init_mat4(&transform);
-		transform = v_add(transform, (t_vec3){(float)glfwGetTime(), -0.5f, 0.0f});
+		init_mat4(&rotation);
+		rotation = mat4x4_rotx(rotation, scop->rot.x);
+		rotation = mat4x4_roty(rotation, scop->rot.y);
+		rotation = mat4x4_rotz(rotation, scop->rot.z);
+		scop->model = v_add(scop->model, (t_vec3){0.f, 0.f, scop->pos.x, 1.0f});
+		//transform = v_add(transform, (t_vec3){0.f, scop->pos.y, 0.f, 0.f});
+		//transform = v_add(transform, (t_vec3){0.f, 0.f, scop->pos.z, 0.f});
 		//float flat_mat = flat_matrice(transform);
 		//transform = v_add(transform, (t_vec3){0.5f, -0.5f, 0.0f});
 		//trans = v_add(trans, (t_mat4){0.1f, -0.1f, 0.0f});
 		//trans = vrot(trans, (t_mat4){0.0f, 0.0, 90.0});
+		mat4x4_print(scop->model);
+		scop->model = mat4x4_mult(scop->model, rotation);
 		glUseProgram(shaderProgram);
-		GLuint transformLoc = glGetUniformLocation(shaderProgram, "transform");
-		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, &transform.mat[0][0]);
+		GLuint modelLoc = glGetUniformLocation(shaderProgram, "model");
+		GLuint viewLoc = glGetUniformLocation(shaderProgram, "view");
+		GLuint projectionLoc = glGetUniformLocation(shaderProgram, "projection");
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &scop->model.mat[0][0]);
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &scop->view.mat[0][0]);
+		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &scop->projection.mat[0][0]);
 
 		glBindVertexArray(VAO);
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); Polygon Mode wireframe
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		//glBindVertexArray(0);
 

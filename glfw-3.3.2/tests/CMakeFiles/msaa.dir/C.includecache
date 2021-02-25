@@ -6,26 +6,6 @@
 
 #IncludeRegexTransform: 
 
-/Users/asaba/scop/glfw-3.3.2/deps/getopt.c
-getopt.h
-/Users/asaba/scop/glfw-3.3.2/deps/getopt.h
-stddef.h
--
-string.h
--
-
-/Users/asaba/scop/glfw-3.3.2/deps/getopt.h
-
-/Users/asaba/scop/glfw-3.3.2/deps/glad_gl.c
-stdio.h
--
-stdlib.h
--
-string.h
--
-glad/gl.h
--
-
 /Users/asaba/scop/glfw-3.3.2/tests/msaa.c
 glad/gl.h
 -

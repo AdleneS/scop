@@ -6,16 +6,6 @@
 
 #IncludeRegexTransform: 
 
-/Users/asaba/scop/glfw-3.3.2/deps/glad_gl.c
-stdio.h
--
-stdlib.h
--
-string.h
--
-glad/gl.h
--
-
 /Users/asaba/scop/glfw-3.3.2/tests/reopen.c
 glad/gl.h
 -

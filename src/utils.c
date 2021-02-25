@@ -1,5 +1,20 @@
 #include "scop.h"
 
+void mat4x4_print(t_mat4 m)
+{
+    int i = -1;
+    while (++i < 4)
+    {
+        int j = -1;
+        while (++j < 4)
+        {
+            printf("| %f |", m.mat[i][j]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+}
+
 double min(double a, double b)
 {
     return ((a < b) ? a : b);
@@ -17,10 +32,37 @@ double clamp(double a, double mi, double ma)
 
 t_mat4 v_add(t_mat4 mat, t_vec3 v2)
 {
-    return ((t_mat4){mat.mat[0][0] + v2.x, mat.mat[0][1] + v2.y, mat.mat[0][2] + v2.z, mat.mat[0][3],
-                     mat.mat[1][0] + v2.x, mat.mat[1][1] + v2.y, mat.mat[1][2] + v2.z, mat.mat[1][3],
-                     mat.mat[2][0] + v2.x, mat.mat[2][1] + v2.y, mat.mat[2][2] + v2.z, mat.mat[2][3],
-                     mat.mat[3][0], mat.mat[3][1], mat.mat[3][2], mat.mat[3][3]});
+    t_mat4 new;
+    init_mat4(&new);
+    new.mat[3][0] = v2.x;
+    new.mat[3][1] = v2.y;
+    new.mat[3][2] = v2.z;
+    return ((new));
+}
+
+void mat4x4_perspective(t_mat4 *m, float y_fov, float aspect, float n, float f)
+{
+    float const a = 1.f / (float)tan(y_fov / 2.f);
+
+    m->mat[0][0] = a / aspect;
+    m->mat[0][1] = 0.f;
+    m->mat[0][2] = 0.f;
+    m->mat[0][3] = 0.f;
+
+    m->mat[1][0] = 0.f;
+    m->mat[1][1] = a;
+    m->mat[1][2] = 0.f;
+    m->mat[1][3] = 0.f;
+
+    m->mat[2][0] = 0.f;
+    m->mat[2][1] = 0.f;
+    m->mat[2][2] = -((f + n) / (f - n));
+    m->mat[2][3] = -1.f;
+
+    m->mat[3][0] = 0.f;
+    m->mat[3][1] = 0.f;
+    m->mat[3][2] = -((2.f * f * n) / (f - n));
+    m->mat[3][3] = 0.f;
 }
 
 // GLfloat *flat_matrice(t_mat4 mat)
@@ -59,30 +101,56 @@ t_mat4 v_add(t_mat4 mat, t_vec3 v2)
 // return ((t_mat4){v1.x / k, v1.y / k, v1.z / k});
 // }
 
-// t_mat4	vrot(t_mat4 in, t_mat4 angle)
-// {
-// 	t_mat4		rx;
-// 	t_mat4		ry;
-// 	t_mat4		rz;
-// 	t_mat4		vcos;
-// 	t_mat4		vsin;
+t_mat4 mat4x4_mult(t_mat4 a, t_mat4 b)
+{
+    t_mat4 temp;
+    int k, r, c;
+    for (c = 0; c < 4; ++c)
+        for (r = 0; r < 4; ++r)
+        {
+            temp.mat[c][r] = 0.f;
+            for (k = 0; k < 4; ++k)
+                temp.mat[c][r] += a.mat[k][r] * b.mat[c][k];
+        }
+    return (temp);
+}
 
-// 	angle.x *= M_PI / 180;
-// 	angle.y *= M_PI / 180;
-// 	angle.z *= M_PI / 180;
-// 	vcos = (t_mat4){cos(angle.z), cos(angle.y), cos(angle.z)};
-// 	vsin = (t_mat4){sin(angle.z), sin(angle.y), sin(angle.z)};
-// 	rx.x = in.x;
-// 	rx.y = in.y * vcos.x + in.z * -vsin.x;
-// 	rx.z = in.y * vsin.x + in.z * vcos.x;
-// 	ry.x = rx.x * vcos.y + rx.z * vsin.y;
-// 	ry.y = rx.y;
-// 	ry.z = rx.x * -vsin.y + in.z * vcos.x;
-// 	rz.x = ry.x * vcos.z + ry.y * -vsin.z;
-// 	rz.y = ry.x * vsin.z + ry.y * vcos.z;
-// 	rz.z = ry.z;
-// 	return (rz);
-// }
+t_mat4 mat4x4_rotx(t_mat4 in, float angle)
+{
+    float s = sinf(angle);
+    float c = cosf(angle);
+    t_mat4 R = {
+        1.f, 0.f, 0.f, 0.f,
+        0.f, c, s, 0.f,
+        0.f, -s, c, 0.f,
+        0.f, 0.f, 0.f, 1.f};
+    return (mat4x4_mult(in, R));
+}
+
+t_mat4 mat4x4_roty(t_mat4 in, float angle)
+{
+    float s = sinf(angle);
+    float c = cosf(angle);
+    t_mat4 R = {
+        c, 0.f, s, 0.f,
+        0.f, 1.f, 0.f, 0.f,
+        -s, 0.f, c, 0.f,
+        0.f, 0.f, 0.f, 1.f};
+    return (mat4x4_mult(in, R));
+}
+
+t_mat4 mat4x4_rotz(t_mat4 in, float angle)
+{
+    float s = sinf(angle);
+    float c = cosf(angle);
+    t_mat4 R = {
+        c, s, 0.f, 0.f,
+        -s, c, 0.f, 0.f,
+        0.f, 0.f, 1.f, 0.f,
+        0.f, 0.f, 0.f, 1.f};
+    return (mat4x4_mult(in, R));
+}
+
 // void rot_x(t_param *p, t_mat4 *d)
 // {
 //     t_mat4 new;
