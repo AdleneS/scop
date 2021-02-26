@@ -6,7 +6,7 @@
 /*   By: asaba <asaba@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/21 14:48:56 by slopez            #+#    #+#             */
-/*   Updated: 2021/02/25 16:50:24 by asaba            ###   ########lyon.fr   */
+/*   Updated: 2021/02/26 17:06:56 by asaba            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,14 @@ t_scop *init_struct()
 int main(int argc, char *argv[])
 {
 	t_scop *scop = init_struct();
-	(void)argc;
-	(void)argv;
+	t_vertex *v = NULL;
+
+	if (argc == 2)
+	{
+		load_file_obj(argv[1], &v, scop);
+	}
+	//print_list(v);
+	//print_array(scop->vertices, scop->size * 6);
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
@@ -48,48 +54,6 @@ int main(int argc, char *argv[])
 	glfwMakeContextCurrent(window);
 	gl3wInit();
 
-	float vertices[] = {
-		-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
-		0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 1.0f,
-		0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 1.0f,
-		0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 1.0f,
-		-0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
-
-		-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-		0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 1.0f,
-		0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f,
-		0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f,
-		-0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 1.0f,
-		-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-
-		-0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 1.0f,
-		-0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 1.0f,
-		-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-		-0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 1.0f,
-
-		0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 1.0f,
-		0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 1.0f,
-		0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 1.0f,
-		0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 1.0f,
-		0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-		0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 1.0f,
-
-		-0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 1.0f,
-		0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f,
-		0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 1.0f,
-		0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 1.0f,
-		-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 1.0f,
-
-		-0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 1.0f,
-		0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 1.0f,
-		0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 1.0f,
-		0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 1.0f,
-		-0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-		-0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 1.0f};
 	//Shaders
 	const char *vertexShaderSource = "#version 330 core\n"
 									 "layout (location = 0) in vec3 aPos;\n"
@@ -153,7 +117,8 @@ int main(int argc, char *argv[])
 	glBindVertexArray(VAO);
 	// 2. copy our vertices array in a buffer for OpenGL to use
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (scop->size * 6), scop->vertices, GL_STATIC_DRAW);
+	//print_array(vertices, 36 * 5);
 	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 	// 3. then set our vertex attributes pointers
@@ -183,6 +148,10 @@ int main(int argc, char *argv[])
 			scop->pos.x += 0.05;
 		if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
 			scop->pos.x -= 0.05;
+		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+			scop->pos.z += 0.05;
+		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+			scop->pos.z -= 0.05;
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		t_mat4 transform;
@@ -192,14 +161,14 @@ int main(int argc, char *argv[])
 		rotation = mat4x4_rotx(rotation, scop->rot.x);
 		rotation = mat4x4_roty(rotation, scop->rot.y);
 		rotation = mat4x4_rotz(rotation, scop->rot.z);
-		scop->model = v_add(scop->model, (t_vec3){0.f, 0.f, scop->pos.x, 1.0f});
+		scop->model = v_add((t_vec3){scop->pos.x, scop->pos.y, scop->pos.z, 1.0f});
 		//transform = v_add(transform, (t_vec3){0.f, scop->pos.y, 0.f, 0.f});
 		//transform = v_add(transform, (t_vec3){0.f, 0.f, scop->pos.z, 0.f});
 		//float flat_mat = flat_matrice(transform);
 		//transform = v_add(transform, (t_vec3){0.5f, -0.5f, 0.0f});
 		//trans = v_add(trans, (t_mat4){0.1f, -0.1f, 0.0f});
 		//trans = vrot(trans, (t_mat4){0.0f, 0.0, 90.0});
-		mat4x4_print(scop->model);
+		//mat4x4_print(scop->model);
 		scop->model = mat4x4_mult(scop->model, rotation);
 		glUseProgram(shaderProgram);
 		GLuint modelLoc = glGetUniformLocation(shaderProgram, "model");
@@ -210,8 +179,8 @@ int main(int argc, char *argv[])
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &scop->projection.mat[0][0]);
 
 		glBindVertexArray(VAO);
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); Polygon Mode wireframe
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //Polygon Mode wireframe
+		glDrawArrays(GL_TRIANGLES, 0, scop->size);
 		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		//glBindVertexArray(0);
 

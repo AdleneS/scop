@@ -15,22 +15,37 @@ void mat4x4_print(t_mat4 m)
     printf("\n");
 }
 
-double min(double a, double b)
+float min(float a, float b)
 {
     return ((a < b) ? a : b);
 }
 
-double max(double a, double b)
+float max(float a, float b)
 {
     return ((a > b) ? a : b);
 }
 
-double clamp(double a, double mi, double ma)
+float clamp(float a, float mi, float ma)
 {
     return (min(max(a, mi), ma));
 }
 
-t_mat4 v_add(t_mat4 mat, t_vec3 v2)
+void print_list(t_vertex *list)
+{
+    t_vertex *tmp;
+
+    tmp = list;
+    int i = 0;
+    while (tmp != NULL)
+    {
+        printf("%f | %f | %f\n", tmp->v.x, tmp->v.y, tmp->v.z);
+        i++;
+        tmp = tmp->next;
+    }
+    printf("%d", i);
+}
+
+t_mat4 v_add(t_vec3 v2)
 {
     t_mat4 new;
     init_mat4(&new);
@@ -92,11 +107,11 @@ void mat4x4_perspective(t_mat4 *m, float y_fov, float aspect, float n, float f)
 // return ((t_mat4){v1.x * v2.x, v1.y * v2.y, v1.z * v2.z});
 // }
 //
-// t_mat4 v_mulk(t_mat4 v1, double k)
+// t_mat4 v_mulk(t_mat4 v1, float k)
 // {
 // return ((t_mat4){v1.x * k, v1.y * k, v1.z * k});
 // }
-// t_mat4 v_div(t_mat4 v1, double k)
+// t_mat4 v_div(t_mat4 v1, float k)
 // {
 // return ((t_mat4){v1.x / k, v1.y / k, v1.z / k});
 // }
@@ -119,11 +134,10 @@ t_mat4 mat4x4_rotx(t_mat4 in, float angle)
 {
     float s = sinf(angle);
     float c = cosf(angle);
-    t_mat4 R = {
-        1.f, 0.f, 0.f, 0.f,
-        0.f, c, s, 0.f,
-        0.f, -s, c, 0.f,
-        0.f, 0.f, 0.f, 1.f};
+    t_mat4 R = (t_mat4){{{1.f, 0.f, 0.f, 0.f},
+                         {0.f, c, s, 0.f},
+                         {0.f, -s, c, 0.f},
+                         {0.f, 0.f, 0.f, 1.f}}};
     return (mat4x4_mult(in, R));
 }
 
@@ -131,11 +145,10 @@ t_mat4 mat4x4_roty(t_mat4 in, float angle)
 {
     float s = sinf(angle);
     float c = cosf(angle);
-    t_mat4 R = {
-        c, 0.f, s, 0.f,
-        0.f, 1.f, 0.f, 0.f,
-        -s, 0.f, c, 0.f,
-        0.f, 0.f, 0.f, 1.f};
+    t_mat4 R = {{{c, 0.f, s, 0.f},
+                 {0.f, 1.f, 0.f, 0.f},
+                 {-s, 0.f, c, 0.f},
+                 {0.f, 0.f, 0.f, 1.f}}};
     return (mat4x4_mult(in, R));
 }
 
@@ -143,11 +156,10 @@ t_mat4 mat4x4_rotz(t_mat4 in, float angle)
 {
     float s = sinf(angle);
     float c = cosf(angle);
-    t_mat4 R = {
-        c, s, 0.f, 0.f,
-        -s, c, 0.f, 0.f,
-        0.f, 0.f, 1.f, 0.f,
-        0.f, 0.f, 0.f, 1.f};
+    t_mat4 R = (t_mat4){{{c, s, 0.f, 0.f},
+                         {-s, c, 0.f, 0.f},
+                         {0.f, 0.f, 1.f, 0.f},
+                         {0.f, 0.f, 0.f, 1.f}}};
     return (mat4x4_mult(in, R));
 }
 
@@ -171,19 +183,19 @@ t_mat4 mat4x4_rotz(t_mat4 in, float angle)
 //     *d = new;
 // }
 
-// double v_dotproduct(t_mat4 v1, t_mat4 v2)
+// float v_dotproduct(t_mat4 v1, t_mat4 v2)
 // {
 //     return (v1.x * v2.x + v1.y * v2.y + v1.z * v2.z);
 // }
 
-// double v_length(t_mat4 v)
+// float v_length(t_mat4 v)
 // {
 //     return (sqrtf(v_dotproduct(v, v)));
 // }
 
 // t_mat4 v_normalize(t_mat4 v)
 // {
-//     double l = v_length(v);
+//     float l = v_length(v);
 //     return ((t_mat4){v.x / l, v.y / l, v.z / l});
 // }
 
@@ -212,4 +224,19 @@ void init_mat4(t_mat4 *s)
     s->mat[1][1] = 1.0f;
     s->mat[2][2] = 1.0f;
     s->mat[3][3] = 1.0f;
+}
+
+void print_array(float *a, int s)
+{
+    int i = 0;
+    while (i < s)
+    {
+        if (i % 6 == 0)
+            printf("\n");
+
+        if (i % (18 * 2) == 0)
+            printf("\n");
+        printf("%f ", a[i]);
+        i++;
+    }
 }
