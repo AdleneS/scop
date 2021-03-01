@@ -45,6 +45,20 @@ void print_list(t_vertex *list)
     printf("%d", i);
 }
 
+void print_list_face(t_face *list)
+{
+    t_face *tmp;
+
+    tmp = list;
+    int i = 0;
+    while (tmp != NULL)
+    {
+        printf("%d | %d | %d\n", tmp->vertex_indices[0], tmp->vertex_indices[1], tmp->vertex_indices[2]);
+        i++;
+        tmp = tmp->next;
+    }
+}
+
 t_mat4 v_add(t_vec3 v2)
 {
     t_mat4 new;
@@ -237,6 +251,18 @@ void print_array(float *a, int s)
         if (i % (18 * 2) == 0)
             printf("\n");
         printf("%f ", a[i]);
+        i++;
+    }
+}
+
+void print_array_face(int *a, int s)
+{
+    int i = 0;
+    while (i < s)
+    {
+        if (i % 3 == 0)
+            printf("\n");
+        printf("%d ", a[i]);
         i++;
     }
 }

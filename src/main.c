@@ -6,7 +6,7 @@
 /*   By: asaba <asaba@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/21 14:48:56 by slopez            #+#    #+#             */
-/*   Updated: 2021/02/26 17:06:56 by asaba            ###   ########lyon.fr   */
+/*   Updated: 2021/03/01 17:23:06 by asaba            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,13 +35,15 @@ int main(int argc, char *argv[])
 {
 	t_scop *scop = init_struct();
 	t_vertex *v = NULL;
+	t_face *f = NULL;
 
 	if (argc == 2)
 	{
-		load_file_obj(argv[1], &v, scop);
+		load_file_obj(argv[1], &v, &f, scop);
 	}
 	//print_list(v);
-	//print_array(scop->vertices, scop->size * 6);
+	print_array_face(scop->faces, scop->face_nb * 3);
+	print_array(scop->vertices, scop->size * 6);
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
@@ -108,19 +110,20 @@ int main(int argc, char *argv[])
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
-	unsigned int VAO, VBO;
-	//unsigned int EBO;
+	unsigned int VAO, VBO, EBO;
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
-	//glGenBuffers(1, &EBO);
+	glGenBuffers(1, &EBO);
 	// 1. bind Vertex Array Object
 	glBindVertexArray(VAO);
 	// 2. copy our vertices array in a buffer for OpenGL to use
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (scop->size * 6), scop->vertices, GL_STATIC_DRAW);
 	//print_array(vertices, 36 * 5);
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * (scop->face_nb * 6), scop->faces, GL_STATIC_DRAW);
+
+	printf("\n%d | %d \n", scop->size, scop->face_nb);
 	// 3. then set our vertex attributes pointers
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
 	glEnableVertexAttribArray(0);
@@ -128,6 +131,8 @@ int main(int argc, char *argv[])
 	glEnableVertexAttribArray(1);
 	glUseProgram(shaderProgram);
 	glEnable(GL_DEPTH_TEST);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //Polygon Mode wireframe
+
 	while (!glfwWindowShouldClose(window))
 	{
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -179,10 +184,9 @@ int main(int argc, char *argv[])
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &scop->projection.mat[0][0]);
 
 		glBindVertexArray(VAO);
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //Polygon Mode wireframe
-		glDrawArrays(GL_TRIANGLES, 0, scop->size);
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		//glBindVertexArray(0);
+		//glDrawArrays(GL_TRIANGLES, 0,  scop->size);
+		glDrawElements(GL_TRIANGLES, scop->face_nb * 3, GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
