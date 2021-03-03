@@ -6,7 +6,7 @@
 /*   By: asaba <asaba@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/21 14:48:56 by slopez            #+#    #+#             */
-/*   Updated: 2021/03/01 17:23:06 by asaba            ###   ########lyon.fr   */
+/*   Updated: 2021/03/03 15:22:25 by asaba            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ t_scop *init_struct()
 	scop->rot.z = 0;
 	init_mat4(&scop->model);
 	init_mat4(&scop->view);
-	mat4x4_perspective(&scop->projection, 45.0, 1920.0f / 1080.0f, 0.1f, 1000.0f);
+	mat4x4_perspective(&scop->projection, 45.0, 1920.0f / 1080.0f, 0.1f, 5000.0f);
 	return scop;
 }
 
@@ -42,8 +42,8 @@ int main(int argc, char *argv[])
 		load_file_obj(argv[1], &v, &f, scop);
 	}
 	//print_list(v);
-	print_array_face(scop->faces, scop->face_nb * 3);
-	print_array(scop->vertices, scop->size * 6);
+	//print_array_face(scop->faces, scop->face_nb * 3);
+	//print_array(scop->vertices, scop->size * 6);
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
@@ -150,13 +150,13 @@ int main(int argc, char *argv[])
 		if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
 			scop->rot.z -= 0.05;
 		if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-			scop->pos.x += 0.05;
+			scop->pos.x += 0.5;
 		if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-			scop->pos.x -= 0.05;
+			scop->pos.x -= 0.5;
 		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-			scop->pos.z += 0.05;
+			scop->pos.z += 0.5;
 		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-			scop->pos.z -= 0.05;
+			scop->pos.z -= 0.5;
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		t_mat4 transform;
