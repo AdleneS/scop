@@ -5,8 +5,8 @@ void load_file_obj(char *filename, t_vertex **vertex_list, t_face **face_list, t
     FILE *file;
     int vertex_nb = 0;
     int face_nb = 0;
-    bool checkVn = false;
-    bool checkVt = false;
+    short int checkVn = 0;
+    short int checkVt = 0;
     if (!(file = fopen(filename, "r")))
         exit(1);
 
@@ -24,15 +24,15 @@ void load_file_obj(char *filename, t_vertex **vertex_list, t_face **face_list, t
         }
 
         if (strncmp(line, "vt ", 3) == 0)
-            checkVt = true;
+            checkVt = 1;
 
         if (strncmp(line, "vn ", 3) == 0)
-            checkVn = true;
+            checkVn = 1;
 
         if (strncmp(line, "o ", 2) == 0)
         {
-            checkVn = false;
-            checkVt = false;
+            checkVn = 0;
+            checkVt = 0;
         }
 
         if (strncmp(line, "f ", 2) == 0 && checkVt && checkVn)
@@ -46,7 +46,7 @@ void load_file_obj(char *filename, t_vertex **vertex_list, t_face **face_list, t
             face_nb++;
             list_pushback_face(face_list, face);
         }
-        else if (trncmp(line, "f ", 2) == 0 && checkVt)
+        else if (strncmp(line, "f ", 2) == 0 && checkVt)
         {
             t_face *face = malloc(sizeof(t_face));
             face->next = NULL;
@@ -57,7 +57,7 @@ void load_file_obj(char *filename, t_vertex **vertex_list, t_face **face_list, t
             face_nb++;
             list_pushback_face(face_list, face);
         }
-        else if (trncmp(line, "f ", 2) == 0 && !checkVt && !checkVn)
+        else if (strncmp(line, "f ", 2) == 0 && !checkVt && !checkVn)
         {
             t_face *face = malloc(sizeof(t_face));
             face->next = NULL;
@@ -91,8 +91,8 @@ void list_to_array(t_scop *scop, t_vertex *v)
         vertices[i + 1] = tmp->v.y;
         vertices[i + 2] = tmp->v.z;
         vertices[i + 3] = 0.1;
-        vertices[i + 4] = 0.3 * i / 8;
-        vertices[i + 5] = 0.5 * i / 3;
+        vertices[i + 4] = 0.3;
+        vertices[i + 5] = 0.5;
         i += 6;
         tmp = tmp->next;
     }
