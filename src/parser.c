@@ -56,8 +56,8 @@ void list_to_array(t_scop *scop, t_vertex *v)
         vertices[i + 1] = tmp->v.y;
         vertices[i + 2] = tmp->v.z;
         vertices[i + 3] = 0.1;
-        vertices[i + 4] = 0.3 * i / 8;
-        vertices[i + 5] = 0.5 * i / 3;
+        vertices[i + 4] = 0.3;
+        vertices[i + 5] = 0.5;
         i += 6;
         tmp = tmp->next;
     }
