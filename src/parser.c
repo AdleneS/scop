@@ -5,6 +5,8 @@ void load_file_obj(char *filename, t_vertex **vertex_list, t_face **face_list, t
     FILE *file;
     int vertex_nb = 0;
     int face_nb = 0;
+    bool checkVn = false;
+    bool checkVt = false;
     if (!(file = fopen(filename, "r")))
         exit(1);
 
@@ -21,15 +23,48 @@ void load_file_obj(char *filename, t_vertex **vertex_list, t_face **face_list, t
             list_pushback(vertex_list, vertex);
         }
 
-        if (strncmp(line, "f ", 2) == 0)
-        {
+        if (strncmp(line, "vt ", 3) == 0)
+            checkVt = true;
 
+        if (strncmp(line, "vn ", 3) == 0)
+            checkVn = true;
+
+        if (strncmp(line, "o ", 2) == 0)
+        {
+            checkVn = false;
+            checkVt = false;
+        }
+
+        if (strncmp(line, "f ", 2) == 0 && checkVt && checkVn)
+        {
             t_face *face = malloc(sizeof(t_face));
             face->next = NULL;
             sscanf(line, "f %d/%d/%d %d/%d/%d %d/%d/%d",
                    &face->vertex_indices[0], &face->texture_indices[0], &face->normal_indices[0],
                    &face->vertex_indices[1], &face->texture_indices[1], &face->normal_indices[1],
                    &face->vertex_indices[2], &face->texture_indices[2], &face->normal_indices[2]);
+            face_nb++;
+            list_pushback_face(face_list, face);
+        }
+        else if (trncmp(line, "f ", 2) == 0 && checkVt)
+        {
+            t_face *face = malloc(sizeof(t_face));
+            face->next = NULL;
+            sscanf(line, "f %d/%d %d/%d %d/%d",
+                   &face->vertex_indices[0], &face->texture_indices[0],
+                   &face->vertex_indices[1], &face->texture_indices[1],
+                   &face->vertex_indices[2], &face->texture_indices[2]);
+            face_nb++;
+            list_pushback_face(face_list, face);
+        }
+        else if (trncmp(line, "f ", 2) == 0 && !checkVt && !checkVn)
+        {
+            t_face *face = malloc(sizeof(t_face));
+            face->next = NULL;
+            sscanf(line, "f %d %d %d",
+                   &face->vertex_indices[0],
+                   &face->vertex_indices[1],
+                   &face->vertex_indices[2]);
             face_nb++;
             list_pushback_face(face_list, face);
         }
