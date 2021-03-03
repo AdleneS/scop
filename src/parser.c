@@ -80,6 +80,9 @@ void list_to_array(t_scop *scop, t_vertex *v)
     t_vertex *tmp = v;
     //print_list(v);
     float *vertices;
+    float r = 0.0f;
+    float g = 0.0f;
+    float b = 0.0f;
     int i = 0;
     if (!(vertices = (float *)(malloc(sizeof(float) * (scop->size + 1) * 6))))
     {
@@ -90,10 +93,13 @@ void list_to_array(t_scop *scop, t_vertex *v)
         vertices[i] = tmp->v.x;
         vertices[i + 1] = tmp->v.y;
         vertices[i + 2] = tmp->v.z;
-        vertices[i + 3] = 0.1;
-        vertices[i + 4] = 0.3;
-        vertices[i + 5] = 0.5;
+        vertices[i + 3] = fmod(r, 1);
+        vertices[i + 4] = fmod(g, 1);
+        vertices[i + 5] = fmod(b, 1);
         i += 6;
+        r += 0.05;
+        g += 0.09;
+        b += 0.01;
         tmp = tmp->next;
     }
     scop->vertices = vertices;
