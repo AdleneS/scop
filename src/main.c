@@ -34,12 +34,10 @@ t_scop *init_struct()
 int main(int argc, char *argv[])
 {
 	t_scop *scop = init_struct();
-	t_vertex *v = NULL;
-	t_face *f = NULL;
 
 	if (argc == 2)
 	{
-		load_file_obj(argv[1], &v, &f, scop);
+		load_file_obj(argv[1], scop);
 	}
 	//print_list(v);
 	//print_array_face(scop->faces, scop->face_nb * 3);

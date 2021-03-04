@@ -30,35 +30,6 @@ float clamp(float a, float mi, float ma)
     return (min(max(a, mi), ma));
 }
 
-void print_list(t_vertex *list)
-{
-    t_vertex *tmp;
-
-    tmp = list;
-    int i = 0;
-    while (tmp != NULL)
-    {
-        printf("%f | %f | %f\n", tmp->v.x, tmp->v.y, tmp->v.z);
-        i++;
-        tmp = tmp->next;
-    }
-    printf("%d", i);
-}
-
-void print_list_face(t_face *list)
-{
-    t_face *tmp;
-
-    tmp = list;
-    int i = 0;
-    while (tmp != NULL)
-    {
-        printf("%d | %d | %d\n", tmp->vertex_indices[0], tmp->vertex_indices[1], tmp->vertex_indices[2]);
-        i++;
-        tmp = tmp->next;
-    }
-}
-
 t_mat4 v_add(t_vec3 v2)
 {
     t_mat4 new;
@@ -265,4 +236,68 @@ void print_array_face(int *a, int s)
         printf("%d ", a[i]);
         i++;
     }
+}
+
+void print_list_v(t_vertex *list)
+{
+    t_vertex *tmp;
+
+    tmp = list;
+    int i = 0;
+    while (tmp != NULL)
+    {
+        printf("v %f  %f  %f\n", tmp->v.x, tmp->v.y, tmp->v.z);
+        i++;
+        tmp = tmp->next;
+    }
+    printf("%d/n/n", i);
+}
+
+void print_list_vt(t_texture *list)
+{
+    t_texture *tmp;
+
+    tmp = list;
+    int i = 0;
+    while (tmp != NULL)
+    {
+        printf("vt %f  %f\n", tmp->v.x, tmp->v.y);
+        i++;
+        tmp = tmp->next;
+    }
+    printf("%d/n/n", i);
+}
+
+void print_list_vn(t_vertex *list)
+{
+    t_vertex *tmp;
+
+    tmp = list;
+    int i = 0;
+    while (tmp != NULL)
+    {
+        printf("vn %f  %f  %f\n", tmp->v.x, tmp->v.y, tmp->v.z);
+        i++;
+        tmp = tmp->next;
+    }
+    printf("%d/n/n", i);
+}
+
+void print_list_face(t_face *list)
+{
+    t_face *tmp;
+
+    tmp = list;
+    int i = 0;
+    while (tmp != NULL)
+    {
+        if (tmp->n_face == 4) {
+            printf("f %d  %d  %d  %d\n", tmp->vertex_indices[0], tmp->vertex_indices[1], tmp->vertex_indices[2], tmp->vertex_indices[3], tmp->n_face);
+        } else {
+           printf("f %d  %d  %d\n", tmp->vertex_indices[0], tmp->vertex_indices[1], tmp->vertex_indices[2]); 
+        }
+        i++;
+        tmp = tmp->next;
+    }
+    printf("\n\n");
 }
