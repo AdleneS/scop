@@ -6,7 +6,7 @@
 /*   By: asaba <asaba@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/21 14:48:56 by slopez            #+#    #+#             */
-/*   Updated: 2021/03/03 15:22:25 by asaba            ###   ########lyon.fr   */
+/*   Updated: 2021/03/04 16:32:24 by asaba            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,11 +72,11 @@ int main(int argc, char *argv[])
 									 "}\0";
 
 	const char *fragmentShaderSource = "#version 330 core\n"
-									   "out vec4 FragColor;\n"
+									   "out vec3 FragColor;\n"
 									   "in vec3 ourColor;\n"
 									   "void main()\n"
 									   "{\n"
-									   "   FragColor = vec4(ourColor, 1.0f);\n"
+									   "   FragColor = ourColor;\n"
 									   "}\n\0";
 
 	//Init Shaders and compile it
@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
 	glUseProgram(shaderProgram);
 	glEnable(GL_DEPTH_TEST);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //Polygon Mode wireframe
-
+	glDepthFunc(GL_LESS);
 	while (!glfwWindowShouldClose(window))
 	{
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
