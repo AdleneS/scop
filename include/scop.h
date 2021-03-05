@@ -39,6 +39,7 @@ typedef struct s_scop
     t_mat4 view;
     t_mat4 projection;
     float *vertices;
+    float *colors;
     int *faces;
     int size;
     int face_nb;
