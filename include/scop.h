@@ -6,6 +6,13 @@
 #include "math.h"
 #include "../gl3w/include/GL/gl3w.h"
 #include "../glfw-3.3.2/include/GLFW/glfw3.h"
+
+typedef struct s_vector2f
+{
+    float x;
+    float y;
+} t_vector2f;
+
 typedef struct s_vector3f
 {
     float x;
@@ -35,6 +42,8 @@ typedef struct s_scop
     int *faces;
     int size;
     int face_nb;
+    int textur_nb;
+    int normal_nb;
 } t_scop;
 
 typedef struct s_vertex
@@ -43,11 +52,18 @@ typedef struct s_vertex
     struct s_vertex *next;
 } t_vertex;
 
+typedef struct s_texture
+{
+    t_vector2f v;
+    struct s_texture *next;
+} t_texture;
+
 typedef struct s_face
 {
-    int vertex_indices[3];
-    int texture_indices[3];
-    int normal_indices[3];
+    int n_face;
+    int vertex_indices[4];
+    int texture_indices[4];
+    int normal_indices[4];
     struct s_face *next;
 } t_face;
 
@@ -69,13 +85,18 @@ void init_mat4(t_mat4 *s);
 GLfloat *flat_matrice(t_mat4 mat);
 void mat4x4_perspective(t_mat4 *m, float y_fov, float aspect, float n, float f);
 void mat4x4_print(t_mat4 m);
-void load_file_obj(char *filename, t_vertex **vertex_list, t_face **face_list, t_scop *scop);
+void load_file_obj(char *filename, t_scop *scop);
 void list_pushback(t_vertex **head, t_vertex *new);
-void print_list(t_vertex *list);
+void print_list_v(t_vertex *list);
 void list_to_array(t_scop *scop, t_vertex *v);
 void print_array(float *a, int s);
 void list_pushback_face(t_face **head, t_face *new);
 void print_list_face(t_face *list);
 void list_to_array_face(t_scop *scop, t_face *f);
 void print_array_face(int *a, int s);
+void list_pushback_tex(t_texture **head, t_texture *new);
+int count_char_in_string(char *str, char c);
+void print_list_vn(t_vertex *list);
+void print_list_vt(t_texture *list);
+
 #endif
