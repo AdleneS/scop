@@ -224,6 +224,34 @@ void print_array(float *a, int s)
         printf("%f ", a[i]);
         i++;
     }
+    printf("\n");
+}
+
+void print_array_vt(float *a, int s)
+{
+    int i = 0;
+    while (i < s)
+    {
+        if (i % 2 == 0)
+            printf("\n");
+
+        printf("%f ", a[i]);
+        i++;
+    }
+    printf("\n");
+}
+
+void print_array_face_vt(int *a, int s)
+{
+    int i = 0;
+    while (i < s)
+    {
+        if (i % 2 == 0)
+            printf("\n");
+        printf("%d ", a[i]);
+        i++;
+    }
+    printf("\n");
 }
 
 void print_array_face(int *a, int s)
@@ -236,6 +264,7 @@ void print_array_face(int *a, int s)
         printf("%d ", a[i]);
         i++;
     }
+    printf("\n");
 }
 
 void print_list_v(t_vertex *list)
@@ -292,7 +321,7 @@ void print_list_face(t_face *list)
     while (tmp != NULL)
     {
         if (tmp->n_face == 4) {
-            printf("f %d  %d  %d  %d\n", tmp->vertex_indices[0], tmp->vertex_indices[1], tmp->vertex_indices[2], tmp->vertex_indices[3], tmp->n_face);
+            printf("f %d  %d  %d  %d\n", tmp->vertex_indices[0], tmp->vertex_indices[1], tmp->vertex_indices[2], tmp->vertex_indices[3]);
         } else {
            printf("f %d  %d  %d\n", tmp->vertex_indices[0], tmp->vertex_indices[1], tmp->vertex_indices[2]); 
         }
@@ -300,4 +329,14 @@ void print_list_face(t_face *list)
         tmp = tmp->next;
     }
     printf("\n\n");
+}
+
+void print_list_face_obj(t_scop *scop)
+{
+    for (int i = 0; i < (scop->face_nb * 3); i++) {
+        if (i % 3 == 0 && i != 0) {
+            printf("\n");
+        }
+        printf("%d/%d/%d  ", scop->faces_v[i] + 1, scop->faces_vt[i] + 1, scop->faces_vn[i] + 1);
+    }
 }

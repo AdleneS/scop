@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (scop->size * 6), scop->vertices, GL_STATIC_DRAW);
 	//print_array(vertices, 36 * 5);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * (scop->face_nb * 6), scop->faces, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * (scop->face_nb * 6), scop->faces_v, GL_STATIC_DRAW);
 
 	printf("\n%d | %d \n", scop->size, scop->face_nb);
 	// 3. then set our vertex attributes pointers

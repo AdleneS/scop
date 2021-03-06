@@ -172,7 +172,16 @@ void load_file_obj(char *filename, t_scop *scop)
     scop->normal_nb = normal_nb;
     scop->face_nb = face_nb;
     list_to_array(scop, vertex_list);
+    list_to_array_texture(scop, textur_list);
+    list_to_array_normal(scop, normal_list);
     list_to_array_face(scop, face_list);
+
+
+    //print_list_face_obj(scop);
+
+    //print_array_face(scop->faces_v, scop->face_nb * 3);
+    //print_array_face_vt(scop->faces_vt, scop->textur_nb * 2);
+    //print_array_face(scop->faces_vn, scop->face_nb * 3);
 
     //print_list_v(vertex_list);
     //print_list_vt(textur_list);
@@ -210,36 +219,106 @@ void list_to_array(t_scop *scop, t_vertex *v)
     scop->vertices = vertices;
 }
 
-void list_to_array_face(t_scop *scop, t_face *f)
-{
-    t_face *tmp = f;
-    int *faces;
-    int i = 0;
 
-    if (!(faces = (int *)(malloc(sizeof(int) * (scop->face_nb + 1) * 3))))
+// new file
+
+
+void list_to_array_texture(t_scop *scop, t_texture *v)
+{
+    t_texture *tmp = v;
+    //print_list(v);
+    float *texture;
+    int i = 0;
+    if (!(texture = (float *)(malloc(sizeof(float) * (scop->size + 1) * 6))))
     {
         exit(1);
     }
     while (tmp)
     {
+        texture[i] = tmp->v.x;
+        texture[i + 1] = tmp->v.y;
+        i += 2;
+        tmp = tmp->next;
+    }
+    scop->texture = texture;
+}
 
-        faces[i] = tmp->vertex_indices[0] - 1;
-        faces[i + 1] = tmp->vertex_indices[1] - 1;
-        faces[i + 2] = tmp->vertex_indices[2] - 1;
+void list_to_array_normal(t_scop *scop, t_vertex *v)
+{
+    t_vertex *tmp = v;
+    //print_list(v);
+    float *normal;
+    int i = 0;
+    if (!(normal = (float *)(malloc(sizeof(float) * (scop->size + 1) * 6))))
+    {
+        exit(1);
+    }
+    while (tmp)
+    {
+        normal[i] = tmp->v.x;
+        normal[i + 1] = tmp->v.y;
+        normal[i + 2] = tmp->v.z;
         i += 3;
+        tmp = tmp->next;
+    }
+    scop->normal = normal;
+}
+
+void list_to_array_face(t_scop *scop, t_face *f)
+{
+    t_face *tmp = f;
+    int *faces_v;
+    int *faces_vt;
+    int *faces_vn;
+    int i = 0;
+    int j = 0;
+
+    if (!(faces_v = (int *)(malloc(sizeof(int) * (scop->face_nb + 1) * 3))))
+        exit(1);
+    if (!(faces_vn = (int *)(malloc(sizeof(int) * (scop->face_nb + 1) * 3))))
+        exit(1);
+    if (!(faces_vt = (int *)(malloc(sizeof(int) * (scop->face_nb + 1) * 3))))
+        exit(1);
+    while (tmp)
+    {
+        faces_v[i] = tmp->vertex_indices[0] - 1;
+        faces_v[i + 1] = tmp->vertex_indices[1] - 1;
+        faces_v[i + 2] = tmp->vertex_indices[2] - 1;
+
+        faces_vt[i] = tmp->texture_indices[0] - 1;
+        faces_vt[i + 1] = tmp->texture_indices[1] - 1;
+        faces_vt[i + 2] = tmp->texture_indices[2] - 1;
+
+        faces_vn[i] = tmp->normal_indices[0] - 1;
+        faces_vn[i + 1] = tmp->normal_indices[1] - 1;
+        faces_vn[i + 2] = tmp->normal_indices[2] - 1;
+        i += 3;
+        j += 2;
 
         if (tmp->n_face == 4)
         {
-            faces[i] = tmp->vertex_indices[2] - 1;
-            faces[i + 1] = tmp->vertex_indices[3] - 1;
-            faces[i + 2] = tmp->vertex_indices[0] - 1;
+            faces_v[i] = tmp->vertex_indices[2] - 1;
+            faces_v[i + 1] = tmp->vertex_indices[3] - 1;
+            faces_v[i + 2] = tmp->vertex_indices[0] - 1;
+
+            faces_vt[i] = tmp->texture_indices[2] - 1;
+            faces_vt[i + 1] = tmp->texture_indices[3] - 1;
+            faces_vt[i + 2] = tmp->texture_indices[0] - 1;
+
+            faces_vn[i] = tmp->normal_indices[2] - 1;
+            faces_vn[i + 1] = tmp->normal_indices[3] - 1;
+            faces_vn[i + 2] = tmp->normal_indices[0] - 1;
             i += 3;
         }
 
         tmp = tmp->next;
     }
-    scop->faces = faces;
+    scop->faces_v = faces_v;
+    scop->faces_vt = faces_vt;
+    scop->faces_vn = faces_vn;
 }
+
+// new file
 
 void list_pushback(t_vertex **head, t_vertex *new)
 {

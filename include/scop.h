@@ -39,7 +39,11 @@ typedef struct s_scop
     t_mat4 view;
     t_mat4 projection;
     float *vertices;
-    int *faces;
+    float *texture;
+    float *normal;
+    int *faces_v;
+    int *faces_vt;
+    int *faces_vn;
     int size;
     int face_nb;
     int textur_nb;
@@ -98,5 +102,10 @@ void list_pushback_tex(t_texture **head, t_texture *new);
 int count_char_in_string(char *str, char c);
 void print_list_vn(t_vertex *list);
 void print_list_vt(t_texture *list);
+void print_array_vt(float *a, int s);
+void list_to_array_texture(t_scop *scop, t_texture *v);
+void list_to_array_normal(t_scop *scop, t_vertex *v);
+void print_array_face_vt(int *a, int s);
+void print_list_face_obj(t_scop *scop);
 
 #endif
