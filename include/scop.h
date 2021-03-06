@@ -44,6 +44,7 @@ typedef struct s_scop
     int *faces_v;
     int *faces_vt;
     int *faces_vn;
+    float *colors;
     int size;
     int face_nb;
     int textur_nb;
