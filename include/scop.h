@@ -75,6 +75,7 @@ t_mat4 mat4x4_rotx(t_mat4 in, float angle);
 t_mat4 mat4x4_roty(t_mat4 in, float angle);
 t_mat4 mat4x4_rotz(t_mat4 in, float angle);
 t_mat4 mat4x4_mult(t_mat4 a, t_mat4 b);
+
 t_mat4 v_sub(t_mat4 v1, t_mat4 v2);
 float v_dotproduct(t_mat4 v1, t_mat4 v2);
 t_mat4 v_mul(t_mat4 v1, t_mat4 v2);
@@ -90,6 +91,7 @@ GLfloat *flat_matrice(t_mat4 mat);
 void mat4x4_perspective(t_mat4 *m, float y_fov, float aspect, float n, float f);
 void mat4x4_print(t_mat4 m);
 void load_file_obj(char *filename, t_scop *scop);
+
 void list_pushback(t_vertex **head, t_vertex *new);
 void print_list_v(t_vertex *list);
 void list_to_array(t_scop *scop, t_vertex *v);
