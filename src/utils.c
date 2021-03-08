@@ -241,6 +241,20 @@ void print_array_vt(float *a, int s)
     printf("\n");
 }
 
+void print_array_vn(float *a, int s)
+{
+    int i = 0;
+    while (i < s)
+    {
+        if (i % 3 == 0)
+            printf("\n");
+
+        printf("%f ", a[i]);
+        i++;
+    }
+    printf("\n");
+}
+
 void print_array_face_vt(int *a, int s)
 {
     int i = 0;
@@ -320,10 +334,13 @@ void print_list_face(t_face *list)
     int i = 0;
     while (tmp != NULL)
     {
-        if (tmp->n_face == 4) {
+        if (tmp->n_face == 4)
+        {
             printf("f %d  %d  %d  %d\n", tmp->vertex_indices[0], tmp->vertex_indices[1], tmp->vertex_indices[2], tmp->vertex_indices[3]);
-        } else {
-           printf("f %d  %d  %d\n", tmp->vertex_indices[0], tmp->vertex_indices[1], tmp->vertex_indices[2]); 
+        }
+        else
+        {
+            printf("f %d  %d  %d\n", tmp->vertex_indices[0], tmp->vertex_indices[1], tmp->vertex_indices[2]);
         }
         i++;
         tmp = tmp->next;
@@ -333,8 +350,10 @@ void print_list_face(t_face *list)
 
 void print_list_face_obj(t_scop *scop)
 {
-    for (int i = 0; i < (scop->face_nb * 3); i++) {
-        if (i % 3 == 0 && i != 0) {
+    for (int i = 0; i < (scop->face_nb * 3); i++)
+    {
+        if (i % 3 == 0 && i != 0)
+        {
             printf("\n");
         }
         printf("%d/%d/%d  ", scop->faces_v[i] + 1, scop->faces_vt[i] + 1, scop->faces_vn[i] + 1);

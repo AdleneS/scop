@@ -92,6 +92,7 @@ GLfloat *flat_matrice(t_mat4 mat);
 void mat4x4_perspective(t_mat4 *m, float y_fov, float aspect, float n, float f);
 void mat4x4_print(t_mat4 m);
 void load_file_obj(char *filename, t_scop *scop);
+void print_array_vn(float *a, int s);
 
 void list_pushback(t_vertex **head, t_vertex *new);
 void print_list_v(t_vertex *list);
