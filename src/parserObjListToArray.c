@@ -27,7 +27,7 @@ void list_to_array_texture(t_scop *scop, t_texture *v)
     //print_list(v);
     float *texture;
     int i = 0;
-    if (!(texture = (float *)(malloc(sizeof(float) * (scop->size + 1) * 6))))
+    if (!(texture = (float *)(malloc(sizeof(float) * (scop->textur_nb + 1) * 2))))
     {
         exit(1);
     }
@@ -47,18 +47,21 @@ void list_to_array_normal(t_scop *scop, t_vertex *v)
     //print_list(v);
     float *normal;
     int i = 0;
-    if (!(normal = (float *)(malloc(sizeof(float) * (scop->size + 1) * 6))))
+    if (!(normal = (float *)(malloc(sizeof(float) * (scop->normal_nb + 1) * 3))))
     {
         exit(1);
     }
     while (tmp)
     {
+        //dprintf(1, "%f %f %f %p\n", tmp->v.x,tmp->v.y,tmp->v.z, tmp->next);
         normal[i] = tmp->v.x;
         normal[i + 1] = tmp->v.y;
         normal[i + 2] = tmp->v.z;
+        //dprintf(1, "float out\n");
         i += 3;
         tmp = tmp->next;
     }
+    //dprintf(1, "end function\n");
     scop->normal = normal;
 }
 
@@ -96,6 +99,7 @@ void list_to_array_face(t_scop *scop, t_face *f)
         faces_vn[i] = tmp->normal_indices[0] - 1;
         faces_vn[i + 1] = tmp->normal_indices[1] - 1;
         faces_vn[i + 2] = tmp->normal_indices[2] - 1;
+
         colors[i] = fmod(r, 1);
         colors[i + 1] = fmod(g, 1);
         colors[i + 2] = fmod(b, 1);
@@ -115,6 +119,7 @@ void list_to_array_face(t_scop *scop, t_face *f)
             faces_vn[i] = tmp->normal_indices[2] - 1;
             faces_vn[i + 1] = tmp->normal_indices[3] - 1;
             faces_vn[i + 2] = tmp->normal_indices[0] - 1;
+
             colors[i] = fmod(r, 1);
             colors[i + 1] = fmod(g, 1);
             colors[i + 2] = fmod(b, 1);
@@ -126,7 +131,7 @@ void list_to_array_face(t_scop *scop, t_face *f)
         tmp = tmp->next;
 
     }
-        scop->colors = colors;
+    scop->colors = colors;
     scop->faces_v = faces_v;
     scop->faces_vt = faces_vt;
     scop->faces_vn = faces_vn;

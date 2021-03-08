@@ -1,6 +1,6 @@
 
 NAME	= scop
-SRCS 	= main.c utils.c parser.c parserObjList.c parserObjListToArray.c
+SRCS 	= main.c utils.c parser.c parserObjList.c parserObjListToArray.c parser_mtl.c
 OBJ_DIR = ./.objs
 SRC_DIR = ./src
 INC_DIR = ./include
