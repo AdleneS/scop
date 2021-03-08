@@ -21,6 +21,14 @@ void load_file_obj(char *filename, t_scop *scop)
 
     while (fgets(line, 1024, file))
     {
+
+        if (strncmp(line, "mtllib ", 7) == 0)
+        {
+            char mtl_name[1024];
+            sscanf(line, "mtllib %s", mtl_name);
+            load_file_mtl(mtl_name, scop);
+        }
+
         if (strncmp(line, "v ", 2) == 0)
         {
             if (checkVn || checkVt)
@@ -179,4 +187,5 @@ void load_file_obj(char *filename, t_scop *scop)
     //print_list_vt(textur_list);
     //print_list_vn(normal_list);
     //print_list_face(face_list);
+    fclose(file);
 }

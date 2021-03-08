@@ -51,6 +51,13 @@ typedef struct s_scop
     int normal_nb;
 } t_scop;
 
+typedef struct s_mtl
+{
+    char *newmtl;
+    t_vec3 Kd;
+    struct s_vertex *next;
+} t_mtl;
+
 typedef struct s_vertex
 {
     t_vec3 v;
@@ -110,5 +117,6 @@ void list_to_array_texture(t_scop *scop, t_texture *v);
 void list_to_array_normal(t_scop *scop, t_vertex *v);
 void print_array_face_vt(int *a, int s);
 void print_list_face_obj(t_scop *scop);
+void load_file_mtl(char *mtl_name, t_scop *scop);
 
 #endif
