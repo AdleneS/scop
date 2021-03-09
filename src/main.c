@@ -6,7 +6,7 @@
 /*   By: asaba <asaba@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/21 14:48:56 by slopez            #+#    #+#             */
-/*   Updated: 2021/03/08 13:05:18 by asaba            ###   ########lyon.fr   */
+/*   Updated: 2021/03/09 16:21:01 by asaba            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,69 @@ t_scop *init_struct()
 	init_mat4(&scop->view);
 	mat4x4_perspective(&scop->projection, 45.0, 1920.0f / 1080.0f, 0.1f, 5000.0f);
 	return scop;
+}
+
+unsigned int compile_shader()
+{
+	const char *vertexShaderSource = "#version 330 core\n"
+									 "layout (location = 0) in vec3 aPos;\n"
+									 "layout (location = 1) in vec3 aColor;\n"
+									 "out vec3 ourColor;\n"
+									 "uniform mat4 model;\n"
+									 "uniform mat4 view;\n"
+									 "uniform mat4 projection;\n"
+									 "uniform mat4 transform;\n"
+									 "void main()\n"
+									 "{\n"
+									 "   gl_Position =  projection * view * model *  vec4(aPos, 1.0);\n"
+									 "   ourColor = aColor;\n"
+									 "}\0";
+
+	const char *fragmentShaderSource = "#version 330 core\n"
+									   "out vec3 FragColor;\n"
+									   "in vec3 ourColor;\n"
+									   "void main()\n"
+									   "{\n"
+									   "   FragColor = ourColor;\n"
+									   "}\n\0";
+
+	const char *VertexShaderLight = "#version 330 core\n"
+									"layout (location = 0) in vec3 aPos;\n"
+
+									"uniform mat4 model;\n"
+									"uniform mat4 view;\n"
+									"uniform mat4 projection;\n"
+									"void main()\n"
+									"{\n"
+									"gl_Position = projection * view * model * vec4(aPos, 1.0);\n"
+									"};\n\0";
+
+	const char *fragmentShaderLight = "#version 330 core\n"
+									  "out vec4 FragColor;\n"
+									  "void main()\n"
+									  "{\n"
+									  "FragColor = vec4(1.0);\n" // set alle 4 vector values to 1.0
+									  "}\n\0";
+
+	unsigned int vertexShader;
+	unsigned int fragmentShader;
+	vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+	glCompileShader(vertexShader);
+	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+	glCompileShader(fragmentShader);
+
+	unsigned int shaderProgram;
+	shaderProgram = glCreateProgram();
+
+	//Attach shaders
+	glAttachShader(shaderProgram, vertexShader);
+	glAttachShader(shaderProgram, fragmentShader);
+	glLinkProgram(shaderProgram);
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+	return shaderProgram;
 }
 
 int main(int argc, char *argv[])
@@ -55,59 +118,11 @@ int main(int argc, char *argv[])
 	glfwMakeContextCurrent(window);
 	gl3wInit();
 
-	//Shaders
-	const char *vertexShaderSource = "#version 330 core\n"
-									 "layout (location = 0) in vec3 aPos;\n"
-									 "layout (location = 1) in vec3 aColor;\n"
-									 "out vec3 ourColor;\n"
-									 "uniform mat4 model;\n"
-									 "uniform mat4 view;\n"
-									 "uniform mat4 projection;\n"
-									 "uniform mat4 transform;\n"
-									 "void main()\n"
-									 "{\n"
-									 "   gl_Position =  projection * view * model *  vec4(aPos, 1.0);\n"
-									 "   ourColor = aColor;\n"
-									 "}\0";
-
-	const char *fragmentShaderSource = "#version 330 core\n"
-									   "out vec3 FragColor;\n"
-									   "in vec3 ourColor;\n"
-									   "void main()\n"
-									   "{\n"
-									   "   FragColor = ourColor;\n"
-									   "}\n\0";
-
 	//Init Shaders and compile it
-	unsigned int vertexShader;
-	unsigned int fragmentShader;
-	vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
-	int success;
-	char infoLog[512];
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		printf("%s", infoLog);
-	}
-	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
-
 	unsigned int shaderProgram;
-	shaderProgram = glCreateProgram();
-
-	//Attach shaders
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
+	shaderProgram = compile_shader();
 
 	glUseProgram(shaderProgram);
-
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
 
 	unsigned int VAO, VBO, EBO, Colors;
 	glGenVertexArrays(1, &VAO);
@@ -135,7 +150,15 @@ int main(int argc, char *argv[])
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
 	glEnableVertexAttribArray(1);
 
-	glUseProgram(shaderProgram);
+	unsigned int lightVAO;
+	glGenVertexArrays(1, &lightVAO);
+	glBindVertexArray(lightVAO);
+	// we only need to bind to the VBO, the container's VBO's data already contains the data.
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	// set the vertex attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+	glEnableVertexAttribArray(0);
+
 	glEnable(GL_DEPTH_TEST);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //Polygon Mode wireframe
 	glDepthFunc(GL_LESS);
@@ -163,8 +186,11 @@ int main(int argc, char *argv[])
 			scop->pos.z += 0.5;
 		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 			scop->pos.z -= 0.5;
+
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glUseProgram(shaderProgram);
+
 		t_mat4 transform;
 		t_mat4 rotation;
 		init_mat4(&transform);
