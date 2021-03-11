@@ -27,13 +27,15 @@ char *sort_path(char *path)
 
 char *join(const char* s1, const char* s2)
 {
-    char* result = malloc(strlen(s1) + strlen(s2) + 1);
+    char* result;
+    if (!(result = (char *)malloc(strlen(s1) + strlen(s2) + 1)))
+        return NULL;
 
-    if (result) // thanks @pmg
+    if (result)
     {
         strcpy(result, s1);
         strcat(result, s2);
     }
-
+    
     return result;
 }
