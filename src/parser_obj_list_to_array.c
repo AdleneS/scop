@@ -129,7 +129,6 @@ void list_to_array_face(t_scop *scop, t_face *f)
         g += 0.09;
         b += 0.01;
         tmp = tmp->next;
-
     }
     scop->colors = colors;
     scop->faces_v = faces_v;

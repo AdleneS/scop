@@ -6,7 +6,7 @@
 /*   By: asaba <asaba@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/21 14:48:56 by slopez            #+#    #+#             */
-/*   Updated: 2021/03/11 14:50:19 by asaba            ###   ########lyon.fr   */
+/*   Updated: 2021/03/11 16:18:01 by asaba            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,10 +62,11 @@ int main(int argc, char *argv[])
 
 	glUseProgram(shaderProgram);
 
-	unsigned int VAO, VBO, EBO, Colors, normal;
+	unsigned int VAO, VBO, EBO, EBON, Colors, normal;
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);
+	glGenBuffers(1, &EBON);
 	glGenBuffers(1, &Colors);
 	glGenBuffers(1, &normal);
 	// 1. bind Vertex Array Object
@@ -74,10 +75,15 @@ int main(int argc, char *argv[])
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (scop->size * 3), scop->vertices, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * (scop->face_nb * 6), scop->faces_v, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * (scop->face_nb * 3), scop->faces_v, GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, normal);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (scop->normal_nb * 3), scop->normal, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBON);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * (scop->face_nb * 3), scop->faces_vn, GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
@@ -92,8 +98,6 @@ int main(int argc, char *argv[])
 	//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
 	//glEnableVertexAttribArray(1);
 
-	//glBindBuffer(GL_ARRAY_BUFFER, normal);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (scop->face_nb * 3), scop->normal, GL_STATIC_DRAW);
 	// Activate the model's color Buffer Object
 	// Bind the color Buffer Object to the 'a_Color' shader variable
 
@@ -125,9 +129,9 @@ int main(int argc, char *argv[])
 		rotation = mat4x4_rotx(rotation, scop->rot.x);
 		rotation = mat4x4_roty(rotation, scop->rot.y);
 		rotation = mat4x4_rotz(rotation, scop->rot.z);
-		scop->model = v_add((t_vec3){scop->pos.x, scop->pos.y, scop->pos.z, 1.0f});
+		scop->view = v_add((t_vec3){scop->pos.x, scop->pos.y, scop->pos.z, 1.0f});
 
-		scop->model = mat4x4_mult(scop->model, rotation);
+		scop->view = mat4x4_mult(scop->view, rotation);
 		glUseProgram(shaderProgram);
 		GLuint modelLoc = glGetUniformLocation(shaderProgram, "model");
 		GLuint viewLoc = glGetUniformLocation(shaderProgram, "view");
@@ -142,7 +146,7 @@ int main(int argc, char *argv[])
 
 		GLfloat objColor[3] = {1.0f, 1.0f, 1.0f};
 		GLfloat ligColor[3] = {1.0f, .5f, 1.0f};
-		GLfloat ligPos[3] = {1.0f, 1.0f, 1.0f};
+		GLfloat ligPos[3] = {0.0f, 50.0f, 0.0f};
 		glUniform3fv(objectColor, 1, objColor);
 		glUniform3fv(lightColor, 1, ligColor);
 		glUniform3fv(lightPos, 1, ligPos);
@@ -150,8 +154,19 @@ int main(int argc, char *argv[])
 		glBindVertexArray(VAO);
 		//glDrawArrays(GL_TRIANGLES, 0,  scop->size);
 		glDrawElements(GL_TRIANGLES, scop->face_nb * 3, GL_UNSIGNED_INT, 0);
-		glBindVertexArray(0);
+		//glBindVertexArray(0);
+		glUseProgram(shaderProgramLight);
+		t_mat4 lModel;
 
+		init_mat4(&lModel);
+		viewLoc = glGetUniformLocation(shaderProgramLight, "view");
+		projectionLoc = glGetUniformLocation(shaderProgramLight, "projection");
+		lModel = v_add((t_vec3){ligPos[0], ligPos[1], ligPos[2], 1.0f});
+		glDrawElements(GL_TRIANGLES, scop->face_nb * 3, GL_UNSIGNED_INT, 0);
+		modelLoc = glGetUniformLocation(shaderProgramLight, "model");
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &lModel.mat[0][0]);
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &scop->view.mat[0][0]);
+		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &scop->projection.mat[0][0]);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
