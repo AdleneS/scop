@@ -3,7 +3,7 @@
 char *sort_file_shader(char *_path)
 {
 	char *buffer = NULL;
-	long length;
+	long length = 0;
 	FILE * f = fopen(_path, "r");
 
 	if (f)
@@ -14,6 +14,7 @@ char *sort_file_shader(char *_path)
   		if (!(buffer = (char *)malloc(length)))
 		  	return NULL;
     	fread(buffer, 1, length, f);
+		buffer[length] = '\0';
   		fclose(f);
 	}
 	return strdup(buffer);

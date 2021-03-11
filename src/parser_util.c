@@ -24,7 +24,7 @@ char *sort_path(char *path)
             tmp = i;
         }
     }
-    strncpy(_path, path, tmp);
+    strncpy(_path, path, tmp +1);
     return _path;
 }
 
