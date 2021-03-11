@@ -6,7 +6,7 @@
 /*   By: asaba <asaba@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/21 14:48:56 by slopez            #+#    #+#             */
-/*   Updated: 2021/03/09 16:21:01 by asaba            ###   ########lyon.fr   */
+/*   Updated: 2021/03/11 12:31:35 by asaba            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,28 +36,67 @@ unsigned int compile_shader()
 	const char *vertexShaderSource = "#version 330 core\n"
 									 "layout (location = 0) in vec3 aPos;\n"
 									 "layout (location = 1) in vec3 aColor;\n"
+									 "layout (location = 2) in vec3 aNormal;\n"
 									 "out vec3 ourColor;\n"
+									 "out vec3 FragPos;\n"
+									 "out vec3 Normal;\n"
 									 "uniform mat4 model;\n"
 									 "uniform mat4 view;\n"
 									 "uniform mat4 projection;\n"
 									 "uniform mat4 transform;\n"
 									 "void main()\n"
 									 "{\n"
-									 "   gl_Position =  projection * view * model *  vec4(aPos, 1.0);\n"
-									 "   ourColor = aColor;\n"
+									 "FragPos = vec3(model * vec4(aPos, 1.0));\n"
+									 "Normal = aNormal;\n"
+									 "gl_Position =  projection * view *  vec4(FragPos, 1.0);\n"
+									 "ourColor = aColor;\n"
 									 "}\0";
 
 	const char *fragmentShaderSource = "#version 330 core\n"
-									   "out vec3 FragColor;\n"
+									   "out vec4 FragColor;\n"
+									   "in vec3 Normal;\n"
+									   "in vec3 FragPos;\n"
 									   "in vec3 ourColor;\n"
+									   "uniform vec3 lightPos;\n"
+									   "uniform vec3 lightColor;\n"
+									   "uniform vec3 objectColor;\n"
 									   "void main()\n"
 									   "{\n"
-									   "   FragColor = ourColor;\n"
-									   "}\n\0";
+									   "float ambientStrength = 0.1;\n"
+									   "vec3 ambient = ambientStrength * lightColor;\n"
+									   "vec3 norm = normalize(Normal);\n"
+									   "vec3 lightDir = normalize(lightPos - FragPos);\n"
+									   "float diff = max(dot(norm, lightDir), 0.0);\n"
+									   "vec3 diffuse = diff * lightColor;\n"
+									   "vec3 result = (ambient + diffuse) * objectColor;\n"
+									   "FragColor = vec4(result, 1.0);\n\0";
+
+	unsigned int vertexShader;
+	unsigned int fragmentShader;
+	vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+	glCompileShader(vertexShader);
+	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+	glCompileShader(fragmentShader);
+
+	unsigned int shaderProgram;
+	shaderProgram = glCreateProgram();
+
+	//Attach shaders
+	glAttachShader(shaderProgram, vertexShader);
+	glAttachShader(shaderProgram, fragmentShader);
+	glLinkProgram(shaderProgram);
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+	return shaderProgram;
+}
+
+unsigned int compile_shader_2()
+{
 
 	const char *VertexShaderLight = "#version 330 core\n"
 									"layout (location = 0) in vec3 aPos;\n"
-
 									"uniform mat4 model;\n"
 									"uniform mat4 view;\n"
 									"uniform mat4 projection;\n"
@@ -76,10 +115,10 @@ unsigned int compile_shader()
 	unsigned int vertexShader;
 	unsigned int fragmentShader;
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+	glShaderSource(vertexShader, 1, &VertexShaderLight, NULL);
 	glCompileShader(vertexShader);
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+	glShaderSource(fragmentShader, 1, &fragmentShaderLight, NULL);
 	glCompileShader(fragmentShader);
 
 	unsigned int shaderProgram;
@@ -121,14 +160,17 @@ int main(int argc, char *argv[])
 	//Init Shaders and compile it
 	unsigned int shaderProgram;
 	shaderProgram = compile_shader();
+	unsigned int shaderProgramLight;
+	shaderProgramLight = compile_shader_2();
 
 	glUseProgram(shaderProgram);
 
-	unsigned int VAO, VBO, EBO, Colors;
+	unsigned int VAO, VBO, EBO, Colors, normal;
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);
 	glGenBuffers(1, &Colors);
+	glGenBuffers(1, &normal);
 	// 1. bind Vertex Array Object
 	glBindVertexArray(VAO);
 	// 2. copy our vertices array in a buffer for OpenGL to use
@@ -143,11 +185,18 @@ int main(int argc, char *argv[])
 	printf("\n%d | %d \n", scop->size, scop->face_nb);
 	// 3. then set our vertex attributes pointers
 
+	// Activate the model's color Buffer Object
 	glBindBuffer(GL_ARRAY_BUFFER, Colors);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (scop->face_nb * 3), scop->colors, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+	glEnableVertexAttribArray(1);
+
+	glBindBuffer(GL_ARRAY_BUFFER, normal);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (scop->face_nb * 3), scop->normal, GL_STATIC_DRAW);
 	// Activate the model's color Buffer Object
 	// Bind the color Buffer Object to the 'a_Color' shader variable
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
 	glEnableVertexAttribArray(1);
 
 	unsigned int lightVAO;
@@ -156,7 +205,7 @@ int main(int argc, char *argv[])
 	// we only need to bind to the VBO, the container's VBO's data already contains the data.
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	// set the vertex attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
 	glEnableVertexAttribArray(0);
 
 	glEnable(GL_DEPTH_TEST);
@@ -187,7 +236,7 @@ int main(int argc, char *argv[])
 		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 			scop->pos.z -= 0.5;
 
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(shaderProgram);
 
@@ -199,13 +248,7 @@ int main(int argc, char *argv[])
 		rotation = mat4x4_roty(rotation, scop->rot.y);
 		rotation = mat4x4_rotz(rotation, scop->rot.z);
 		scop->model = v_add((t_vec3){scop->pos.x, scop->pos.y, scop->pos.z, 1.0f});
-		//transform = v_add(transform, (t_vec3){0.f, scop->pos.y, 0.f, 0.f});
-		//transform = v_add(transform, (t_vec3){0.f, 0.f, scop->pos.z, 0.f});
-		//float flat_mat = flat_matrice(transform);
-		//transform = v_add(transform, (t_vec3){0.5f, -0.5f, 0.0f});
-		//trans = v_add(trans, (t_mat4){0.1f, -0.1f, 0.0f});
-		//trans = vrot(trans, (t_mat4){0.0f, 0.0, 90.0});
-		//mat4x4_print(scop->model);
+
 		scop->model = mat4x4_mult(scop->model, rotation);
 		glUseProgram(shaderProgram);
 		GLuint modelLoc = glGetUniformLocation(shaderProgram, "model");
