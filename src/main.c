@@ -6,7 +6,7 @@
 /*   By: asaba <asaba@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/21 14:48:56 by slopez            #+#    #+#             */
-/*   Updated: 2021/03/11 13:21:44 by asaba            ###   ########lyon.fr   */
+/*   Updated: 2021/03/11 13:26:59 by asaba            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,12 +89,12 @@ int main(int argc, char *argv[])
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
 	glEnableVertexAttribArray(1);
 
-	glBindBuffer(GL_ARRAY_BUFFER, normal);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (scop->face_nb * 3), scop->normal, GL_STATIC_DRAW);
+	//glBindBuffer(GL_ARRAY_BUFFER, normal);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (scop->face_nb * 3), scop->normal, GL_STATIC_DRAW);
 	// Activate the model's color Buffer Object
 	// Bind the color Buffer Object to the 'a_Color' shader variable
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-	glEnableVertexAttribArray(1);
+	//glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+	//glEnableVertexAttribArray(1);
 
 	unsigned int lightVAO;
 	glGenVertexArrays(1, &lightVAO);
