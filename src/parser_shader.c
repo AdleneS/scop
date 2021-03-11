@@ -37,30 +37,24 @@ t_shader read_path()
 				exit(1);
 
 			if (strncmp(rd->d_name, "vertex_light.SHADER", 19) == 0) {
-				printf("=> 1\n");
 				if (!(shader.vertexShaderLight = sort_file_shader(_path)))
 					exit(1);
 			}
 
 			if (strncmp(rd->d_name, "fragment_light.SHADER", 21) == 0) {
-				printf("=> 2\n");
 				if (!(shader.fragmentShaderLight = sort_file_shader(_path)))
 					exit(1);
 			}
 
 			if (strncmp(rd->d_name, "vertex_source.SHADER", 20) == 0) {
-				printf("=> 3\n");
 				if (!(shader.vertexShaderSource = sort_file_shader(_path)))
 					exit(1);
 			}
 
 			if (strncmp(rd->d_name, "fragment_source.SHADER", 22) == 0) {
-				printf("=> 4\n");
 				if (!(shader.fragmentShaderSource = sort_file_shader(_path)))
 					exit(1);
-			} 
-
-			printf("%s\n", rd->d_name);
+			}
 			free(_path);
 		}
 	}

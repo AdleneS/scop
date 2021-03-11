@@ -2,8 +2,6 @@
 
 unsigned int compile_shader_test(char *vertexSource, char *fragmentSource)
 {
-	printf("-> %s \n\n", vertexSource);
-    printf("-> %s \n\n", fragmentSource);
     unsigned int vertexShader;
 	unsigned int fragmentShader;
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
