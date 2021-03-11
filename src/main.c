@@ -6,7 +6,7 @@
 /*   By: asaba <asaba@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/21 14:48:56 by slopez            #+#    #+#             */
-/*   Updated: 2021/03/11 12:31:35 by asaba            ###   ########lyon.fr   */
+/*   Updated: 2021/03/11 13:21:44 by asaba            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,111 +31,10 @@ t_scop *init_struct()
 	return scop;
 }
 
-unsigned int compile_shader()
-{
-	const char *vertexShaderSource = "#version 330 core\n"
-									 "layout (location = 0) in vec3 aPos;\n"
-									 "layout (location = 1) in vec3 aColor;\n"
-									 "layout (location = 2) in vec3 aNormal;\n"
-									 "out vec3 ourColor;\n"
-									 "out vec3 FragPos;\n"
-									 "out vec3 Normal;\n"
-									 "uniform mat4 model;\n"
-									 "uniform mat4 view;\n"
-									 "uniform mat4 projection;\n"
-									 "uniform mat4 transform;\n"
-									 "void main()\n"
-									 "{\n"
-									 "FragPos = vec3(model * vec4(aPos, 1.0));\n"
-									 "Normal = aNormal;\n"
-									 "gl_Position =  projection * view *  vec4(FragPos, 1.0);\n"
-									 "ourColor = aColor;\n"
-									 "}\0";
-
-	const char *fragmentShaderSource = "#version 330 core\n"
-									   "out vec4 FragColor;\n"
-									   "in vec3 Normal;\n"
-									   "in vec3 FragPos;\n"
-									   "in vec3 ourColor;\n"
-									   "uniform vec3 lightPos;\n"
-									   "uniform vec3 lightColor;\n"
-									   "uniform vec3 objectColor;\n"
-									   "void main()\n"
-									   "{\n"
-									   "float ambientStrength = 0.1;\n"
-									   "vec3 ambient = ambientStrength * lightColor;\n"
-									   "vec3 norm = normalize(Normal);\n"
-									   "vec3 lightDir = normalize(lightPos - FragPos);\n"
-									   "float diff = max(dot(norm, lightDir), 0.0);\n"
-									   "vec3 diffuse = diff * lightColor;\n"
-									   "vec3 result = (ambient + diffuse) * objectColor;\n"
-									   "FragColor = vec4(result, 1.0);\n\0";
-
-	unsigned int vertexShader;
-	unsigned int fragmentShader;
-	vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
-	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
-
-	unsigned int shaderProgram;
-	shaderProgram = glCreateProgram();
-
-	//Attach shaders
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-	return shaderProgram;
-}
-
-unsigned int compile_shader_2()
-{
-
-	const char *VertexShaderLight = "#version 330 core\n"
-									"layout (location = 0) in vec3 aPos;\n"
-									"uniform mat4 model;\n"
-									"uniform mat4 view;\n"
-									"uniform mat4 projection;\n"
-									"void main()\n"
-									"{\n"
-									"gl_Position = projection * view * model * vec4(aPos, 1.0);\n"
-									"};\n\0";
-
-	const char *fragmentShaderLight = "#version 330 core\n"
-									  "out vec4 FragColor;\n"
-									  "void main()\n"
-									  "{\n"
-									  "FragColor = vec4(1.0);\n" // set alle 4 vector values to 1.0
-									  "}\n\0";
-
-	unsigned int vertexShader;
-	unsigned int fragmentShader;
-	vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &VertexShaderLight, NULL);
-	glCompileShader(vertexShader);
-	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderLight, NULL);
-	glCompileShader(fragmentShader);
-
-	unsigned int shaderProgram;
-	shaderProgram = glCreateProgram();
-
-	//Attach shaders
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-	return shaderProgram;
-}
-
 int main(int argc, char *argv[])
 {
 	t_scop *scop = init_struct();
+	t_shader shader = read_path();
 
 	if (argc == 2)
 	{
@@ -158,10 +57,8 @@ int main(int argc, char *argv[])
 	gl3wInit();
 
 	//Init Shaders and compile it
-	unsigned int shaderProgram;
-	shaderProgram = compile_shader();
-	unsigned int shaderProgramLight;
-	shaderProgramLight = compile_shader_2();
+	unsigned int shaderProgram = compile_shader_test(shader.vertexShaderSource, shader.fragmentShaderSource);
+	unsigned int shaderProgramLight = compile_shader_test(shader.vertexShaderLight, shader.fragmentShaderLight);
 
 	glUseProgram(shaderProgram);
 

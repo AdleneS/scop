@@ -25,8 +25,9 @@ void load_file_obj(char *filename, t_scop *scop)
         if (strncmp(line, "mtllib ", 7) == 0)
         {
             char mtl_name[1024];
+            char *path = sort_path(filename);
             sscanf(line, "mtllib %s", mtl_name);
-            load_file_mtl(mtl_name, scop);
+            load_file_mtl(mtl_name, scop, path);
         }
 
         if (strncmp(line, "v ", 2) == 0)

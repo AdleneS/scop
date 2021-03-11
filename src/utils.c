@@ -359,3 +359,11 @@ void print_list_face_obj(t_scop *scop)
         printf("%d/%d/%d  ", scop->faces_v[i] + 1, scop->faces_vt[i] + 1, scop->faces_vn[i] + 1);
     }
 }
+
+void print_list_shader(t_shader tmp)
+{
+    printf("shader file fragmentShaderLight :: \n%s\n\n\n", tmp.fragmentShaderLight);
+    printf("shader file vertexShaderLight :: \n%s\n\n\n", tmp.vertexShaderLight);
+    printf("shader file fragmentShaderSource :: \n%s\n\n\n", tmp.fragmentShaderSource);
+    printf("shader file vertexShaderSource :: \n%s\n\n\n", tmp.vertexShaderSource);
+}
