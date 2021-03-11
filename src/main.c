@@ -6,7 +6,7 @@
 /*   By: asaba <asaba@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/21 14:48:56 by slopez            #+#    #+#             */
-/*   Updated: 2021/03/11 13:26:59 by asaba            ###   ########lyon.fr   */
+/*   Updated: 2021/03/11 14:50:19 by asaba            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,8 @@ int main(int argc, char *argv[])
 	}
 	//print_list(v);
 	//print_array_face(scop->faces, scop->face_nb * 3);
-	//print_array(scop->vertices, scop->size * 6);
-	//print_array_vn(scop->normal, scop->normal_nb);
+	print_array(scop->vertices, scop->size * 6);
+	print_array_vn(scop->normal, scop->normal_nb * 3);
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
@@ -73,28 +73,29 @@ int main(int argc, char *argv[])
 	// 2. copy our vertices array in a buffer for OpenGL to use
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (scop->size * 3), scop->vertices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-	glEnableVertexAttribArray(0);
-	//print_array(vertices, 36 * 5);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * (scop->face_nb * 6), scop->faces_v, GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
 
 	printf("\n%d | %d \n", scop->size, scop->face_nb);
 	// 3. then set our vertex attributes pointers
 
 	// Activate the model's color Buffer Object
-	glBindBuffer(GL_ARRAY_BUFFER, Colors);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (scop->face_nb * 3), scop->colors, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-	glEnableVertexAttribArray(1);
+	//glBindBuffer(GL_ARRAY_BUFFER, Colors);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (scop->face_nb * 3), scop->colors, GL_STATIC_DRAW);
+	//
+	//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+	//glEnableVertexAttribArray(1);
 
 	//glBindBuffer(GL_ARRAY_BUFFER, normal);
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (scop->face_nb * 3), scop->normal, GL_STATIC_DRAW);
 	// Activate the model's color Buffer Object
 	// Bind the color Buffer Object to the 'a_Color' shader variable
-	//glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-	//glEnableVertexAttribArray(1);
 
 	unsigned int lightVAO;
 	glGenVertexArrays(1, &lightVAO);
@@ -102,7 +103,7 @@ int main(int argc, char *argv[])
 	// we only need to bind to the VBO, the container's VBO's data already contains the data.
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	// set the vertex attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
 	glEnableVertexAttribArray(0);
 
 	glEnable(GL_DEPTH_TEST);
@@ -132,6 +133,10 @@ int main(int argc, char *argv[])
 			scop->pos.z += 0.5;
 		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 			scop->pos.z -= 0.5;
+		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+			scop->pos.y += 0.5;
+		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+			scop->pos.y -= 0.5;
 
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -151,9 +156,20 @@ int main(int argc, char *argv[])
 		GLuint modelLoc = glGetUniformLocation(shaderProgram, "model");
 		GLuint viewLoc = glGetUniformLocation(shaderProgram, "view");
 		GLuint projectionLoc = glGetUniformLocation(shaderProgram, "projection");
+
+		GLuint objectColor = glGetUniformLocation(shaderProgram, "objectColor");
+		GLuint lightColor = glGetUniformLocation(shaderProgram, "lightColor");
+		GLuint lightPos = glGetUniformLocation(shaderProgram, "lightPos");
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &scop->model.mat[0][0]);
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &scop->view.mat[0][0]);
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &scop->projection.mat[0][0]);
+
+		GLfloat objColor[3] = {1.0f, 1.0f, 1.0f};
+		GLfloat ligColor[3] = {1.0f, .5f, 1.0f};
+		GLfloat ligPos[3] = {1.0f, 1.0f, 1.0f};
+		glUniform3fv(objectColor, 1, objColor);
+		glUniform3fv(lightColor, 1, ligColor);
+		glUniform3fv(lightPos, 1, ligPos);
 
 		glBindVertexArray(VAO);
 		//glDrawArrays(GL_TRIANGLES, 0,  scop->size);
