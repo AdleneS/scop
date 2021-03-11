@@ -19,12 +19,13 @@ char *sort_path(char *path)
 
     for (int i = 0; path[i]; i++)
     {
-        if (path[i] == '/' && path[i])
+        if (path[i] == '/' && path[i + 1])
         {
             tmp = i;
         }
     }
-    strncpy(_path, path, tmp +1);
+    strncpy(_path, path, tmp + 1);
+    _path[tmp + 1] = '\0';
     return _path;
 }
 

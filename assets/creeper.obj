@@ -1,6 +1,6 @@
 # Blender v2.81 (sub 16) OBJ File: 'creeper.blend'
 # www.blender.org
-mtllib assets/creeper.mtl
+mtllib creeper.mtl
 o Cube
 v 8.000000 6.000000 -12.000000
 v 8.000000 0.000000 -12.000000

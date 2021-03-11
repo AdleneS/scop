@@ -140,4 +140,6 @@ void list_pushback_shader(t_shader **head, t_shader *new);
 void print_list_shader(t_shader tmp);
 unsigned int compile_shader_test(char *vertexSource, char *fragmentSource);
 
+void input_key(t_scop *scop, GLFWwindow *window);
+
 #endif
