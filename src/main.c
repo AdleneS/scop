@@ -6,7 +6,7 @@
 /*   By: asaba <asaba@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/21 14:48:56 by slopez            #+#    #+#             */
-/*   Updated: 2021/03/08 11:42:07 by asaba            ###   ########lyon.fr   */
+/*   Updated: 2021/03/09 16:21:01 by asaba            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,30 +31,8 @@ t_scop *init_struct()
 	return scop;
 }
 
-int main(int argc, char *argv[])
+unsigned int compile_shader()
 {
-	t_scop *scop = init_struct();
-
-	if (argc == 2)
-	{
-		load_file_obj(argv[1], scop);
-	}
-	//print_list(v);
-	//print_array_face(scop->faces, scop->face_nb * 3);
-	//print_array(scop->vertices, scop->size * 6);
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-
-	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-
-	GLFWwindow *window = glfwCreateWindow(1920, 1080, "SCOP", NULL, NULL); // Windowed
-	glfwMakeContextCurrent(window);
-	gl3wInit();
-
-	//Shaders
 	const char *vertexShaderSource = "#version 330 core\n"
 									 "layout (location = 0) in vec3 aPos;\n"
 									 "layout (location = 1) in vec3 aColor;\n"
@@ -77,23 +55,43 @@ int main(int argc, char *argv[])
 									   "   FragColor = ourColor;\n"
 									   "}\n\0";
 
-	//Init Shaders and compile it
+	const char *VertexShaderLight = "#version 330 core\n"
+									"layout (location = 0) in vec3 aPos;\n"
+
+									"uniform mat4 model;\n"
+									"uniform mat4 view;\n"
+									"uniform mat4 projection;\n"
+									"void main()\n"
+									"{\n"
+									"gl_Position = projection * view * model * vec4(aPos, 1.0);\n"
+									"};\n\0";
+
+	const char *fragmentShaderLight = "#version 330 core\n"
+									  "out vec4 FragColor;\n"
+									  "void main()\n"
+									  "{\n"
+									  "FragColor = vec4(1.0);\n" // set alle 4 vector values to 1.0
+									  "}\n\0";
+
 	unsigned int vertexShader;
 	unsigned int fragmentShader;
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
 	glCompileShader(vertexShader);
-	int success;
-	char infoLog[512];
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		printf("%s", infoLog);
-	}
+
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
 	glCompileShader(fragmentShader);
+
+
+	unsigned int vertexLight;
+	unsigned int fragmentLight;
+	vertexLight = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertexLight, 1, &VertexShaderLight, NULL);
+	glCompileShader(vertexLight);
+	fragmentLight = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentLight, 1, &fragmentShaderLight, NULL);
+	glCompileShader(fragmentLight);
 
 	unsigned int shaderProgram;
 	shaderProgram = glCreateProgram();
@@ -101,12 +99,46 @@ int main(int argc, char *argv[])
 	//Attach shaders
 	glAttachShader(shaderProgram, vertexShader);
 	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
 
-	glUseProgram(shaderProgram);
+	glLinkProgram(shaderProgram);
 
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
+
+	return shaderProgram;
+}
+
+int main(int argc, char *argv[])
+{
+	t_scop *scop = init_struct();
+
+	if (argc == 2)
+	{
+		load_file_obj(argv[1], scop);
+	}
+	print_list_shader(read_path());
+	printf("test sortie \n");
+	//print_list(v);
+	//print_array_face(scop->faces, scop->face_nb * 3);
+	//print_array(scop->vertices, scop->size * 6);
+	//print_array_vn(scop->normal, scop->normal_nb);
+	glfwInit();
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+
+	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+
+	GLFWwindow *window = glfwCreateWindow(1920, 1080, "SCOP", NULL, NULL); // Windowed
+	glfwMakeContextCurrent(window);
+	gl3wInit();
+
+	//Init Shaders and compile it
+	unsigned int shaderProgram;
+	shaderProgram = compile_shader();
+
+	glUseProgram(shaderProgram);
 
 	unsigned int VAO, VBO, EBO, Colors;
 	glGenVertexArrays(1, &VAO);
@@ -117,7 +149,7 @@ int main(int argc, char *argv[])
 	glBindVertexArray(VAO);
 	// 2. copy our vertices array in a buffer for OpenGL to use
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (scop->size * 6), scop->vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (scop->size * 3), scop->vertices, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
 	glEnableVertexAttribArray(0);
 	//print_array(vertices, 36 * 5);
@@ -134,7 +166,15 @@ int main(int argc, char *argv[])
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
 	glEnableVertexAttribArray(1);
 
-	glUseProgram(shaderProgram);
+	unsigned int lightVAO;
+	glGenVertexArrays(1, &lightVAO);
+	glBindVertexArray(lightVAO);
+	// we only need to bind to the VBO, the container's VBO's data already contains the data.
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	// set the vertex attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+	glEnableVertexAttribArray(0);
+
 	glEnable(GL_DEPTH_TEST);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //Polygon Mode wireframe
 	glDepthFunc(GL_LESS);
@@ -162,8 +202,11 @@ int main(int argc, char *argv[])
 			scop->pos.z += 0.5;
 		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 			scop->pos.z -= 0.5;
+
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glUseProgram(shaderProgram);
+
 		t_mat4 transform;
 		t_mat4 rotation;
 		init_mat4(&transform);
