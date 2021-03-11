@@ -13,37 +13,57 @@ char *sort_file_shader(char *_path)
   		fseek(f, 0, SEEK_SET);
   		if (!(buffer = (char *)malloc(length)))
 		  	return NULL;
-    		fread(buffer, 1, length, f);
+    	fread(buffer, 1, length, f);
   		fclose(f);
 	}
 	return strdup(buffer);
 }
 
-t_shader *read_path()
+t_shader read_path()
 {
     const char *path = "./util/";
 	DIR			*dir;
 	t_dirent	*rd;
-	t_shader *shader_list = NULL;
+	t_shader shader;
 
 	if (!(dir = opendir(path)))
-		return NULL;
+		exit(1);
 	while ((rd = readdir(dir)))
 	{
 		if (strncmp(rd->d_name, ".", 1) != 0 && strncmp(rd->d_name, "..", 2) != 0)
 		{
-			t_shader *new = new;
-			if (!(new = (t_shader *)malloc(sizeof(t_shader))))
-				return NULL;
 			char *_path = NULL;
 			if (!(_path = join(path, rd->d_name)))
-				return NULL;
-			new->name = strdup(rd->d_name);
-			if (!(new->shader = sort_file_shader(_path)))
-				return NULL;
-			list_pushback_shader(&shader_list, new);
+				exit(1);
+
+			if (strncmp(rd->d_name, "vertex_light.SHADER", 19) == 0) {
+				printf("=> 1\n");
+				if (!(shader.vertexShaderLight = sort_file_shader(_path)))
+					exit(1);
+			}
+
+			if (strncmp(rd->d_name, "fragment_light.SHADER", 21) == 0) {
+				printf("=> 2\n");
+				if (!(shader.fragmentShaderLight = sort_file_shader(_path)))
+					exit(1);
+			}
+
+			if (strncmp(rd->d_name, "vertex_source.SHADER", 20) == 0) {
+				printf("=> 3\n");
+				if (!(shader.vertexShaderSource = sort_file_shader(_path)))
+					exit(1);
+			}
+
+			if (strncmp(rd->d_name, "fragment_source.SHADER", 22) == 0) {
+				printf("=> 4\n");
+				if (!(shader.fragmentShaderSource = sort_file_shader(_path)))
+					exit(1);
+			} 
+
+			printf("%s\n", rd->d_name);
+			free(_path);
 		}
 	}
 	closedir(dir);
-	return shader_list;
+	return shader;
 }

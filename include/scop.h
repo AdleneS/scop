@@ -85,9 +85,10 @@ typedef struct s_face
 
 typedef struct s_shader
 {
-    char *name;
-    char *shader;
-    struct s_shader *next;
+    char *vertexShaderSource;
+    char *fragmentShaderSource;
+    char *vertexShaderLight;
+    char *fragmentShaderLight;
 } t_shader;
 
 
@@ -132,11 +133,11 @@ void print_array_face_vt(int *a, int s);
 void print_list_face_obj(t_scop *scop);
 void load_file_mtl(char *mtl_name, t_scop *scop, char *path);
 
-t_shader *read_path(); 
+t_shader read_path(); 
 char *sort_path(char *path);
 char *join(const char* s1, const char* s2);
 void list_pushback_shader(t_shader **head, t_shader *new);
-void print_list_shader(t_shader *list);
-unsigned int compile_shader_test();
+void print_list_shader(t_shader tmp);
+unsigned int compile_shader_test(char *vertexSource, char *fragmentSource);
 
 #endif

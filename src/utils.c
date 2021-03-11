@@ -360,16 +360,10 @@ void print_list_face_obj(t_scop *scop)
     }
 }
 
-void print_list_shader(t_shader *list)
+void print_list_shader(t_shader tmp)
 {
-    t_shader *tmp;
-
-    tmp = list;
-    if (list == NULL)
-        printf("error : no shader load\n");
-    while (tmp != NULL)
-    {
-        printf("shader file :: %s\n%s\n\n\n", tmp->name, tmp->shader);
-        tmp = tmp->next;
-    }
+    printf("shader file fragmentShaderLight :: \n%s\n\n\n", tmp.fragmentShaderLight);
+    printf("shader file vertexShaderLight :: \n%s\n\n\n", tmp.vertexShaderLight);
+    printf("shader file fragmentShaderSource :: \n%s\n\n\n", tmp.fragmentShaderSource);
+    printf("shader file vertexShaderSource :: \n%s\n\n\n", tmp.vertexShaderSource);
 }

@@ -1,28 +1,31 @@
 #include "scop.h"
 
-unsigned int compile_shader_element(char *shader)
+unsigned int compile_shader_test(char *vertexSource, char *fragmentSource)
 {
-    unsigned int shaderElement = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(shaderElement, 1, (const char *const *)&shader, NULL);
-    glCompileShader(shaderElement);
-    return shaderElement;
-}
+	printf("-> %s \n\n", vertexSource);
+    printf("-> %s \n\n", fragmentSource);
+    unsigned int vertexShader;
+	unsigned int fragmentShader;
+	vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertexShader, 1, (const char *const *)&vertexSource, NULL);
+	glCompileShader(vertexShader);
 
-unsigned int compile_shader_test()
-{
-    t_shader *shader = read_path();
-    unsigned int shaderProgram;
+	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentShader, 1, (const char *const *)&fragmentSource, NULL);
+	glCompileShader(fragmentShader);
+
+
+	unsigned int shaderProgram;
 	shaderProgram = glCreateProgram();
 
 	//Attach shaders
-    while (shader->next)
-    {
-        unsigned int shaderElement = compile_shader_element(shader->shader);
-        glAttachShader(shaderProgram, shaderElement);
-        glLinkProgram(shaderProgram);
-        glDeleteShader(shaderElement);
-        shader = shader->next;
-    }
+	glAttachShader(shaderProgram, vertexShader);
+	glAttachShader(shaderProgram, fragmentShader);
+
+	glLinkProgram(shaderProgram);
+
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
 
 	return shaderProgram;
 }

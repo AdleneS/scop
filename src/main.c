@@ -84,15 +84,6 @@ unsigned int compile_shader()
 	glCompileShader(fragmentShader);
 
 
-	unsigned int vertexLight;
-	unsigned int fragmentLight;
-	vertexLight = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexLight, 1, &VertexShaderLight, NULL);
-	glCompileShader(vertexLight);
-	fragmentLight = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentLight, 1, &fragmentShaderLight, NULL);
-	glCompileShader(fragmentLight);
-
 	unsigned int shaderProgram;
 	shaderProgram = glCreateProgram();
 
@@ -111,6 +102,7 @@ unsigned int compile_shader()
 int main(int argc, char *argv[])
 {
 	t_scop *scop = init_struct();
+	t_shader shader = read_path();
 
 	if (argc == 2)
 	{
@@ -135,8 +127,9 @@ int main(int argc, char *argv[])
 	gl3wInit();
 
 	//Init Shaders and compile it
-	unsigned int shaderProgram;
-	shaderProgram = compile_shader();
+	unsigned int shaderProgram = compile_shader_test(shader.vertexShaderSource, shader.fragmentShaderSource);
+	unsigned int shaderProgramLight = compile_shader_test(shader.vertexShaderLight, shader.fragmentShaderLight);
+
 
 	glUseProgram(shaderProgram);
 

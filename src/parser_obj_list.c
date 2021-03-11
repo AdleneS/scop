@@ -42,20 +42,6 @@ void list_pushback_face(t_face **head, t_face *new)
     }
 }
 
-void list_pushback_shader(t_shader **head, t_shader *new)
-{
-    t_shader *tmp_f;
-    if (!*head)
-        *head = new;
-    else
-    {
-        tmp_f = *head;
-        while (tmp_f->next)
-            tmp_f = tmp_f->next;
-        tmp_f->next = new;
-    }
-}
-
 int count_char_in_string(char *str, char c)
 {
     int len = 0;

@@ -1,6 +1,6 @@
 #include "scop.h"
 
-int path_len(char *str)
+static int path_len(char *str)
 {
     int i = 0;
     while (str[i++]) {
@@ -36,6 +36,6 @@ char *join(const char* s1, const char* s2)
         strcpy(result, s1);
         strcat(result, s2);
     }
-    
+
     return result;
 }
