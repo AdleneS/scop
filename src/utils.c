@@ -367,11 +367,14 @@ void print_list_shader(t_shader tmp)
 
 void print_vertex_face(t_vertex_face *list)
 {
-    while (list->next)
+    int j = 0;
+    while (list)
     {
+        j++;
         printf("v %f %f %f\n", list->vertex.x, list->vertex.y, list->vertex.z);
         printf("t %f %f\n", list->texture.x, list->texture.y);
         printf("n %f %f %f\n\n", list->normal.x, list->normal.y, list->normal.z);
         list = list->next;
     }
+    printf("%d\n", j);
 }

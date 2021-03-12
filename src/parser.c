@@ -172,23 +172,24 @@ void load_file_obj(char *filename, t_scop *scop)
     scop->size = vertex_nb;
     scop->textur_nb = texture_nb;
     scop->normal_nb = normal_nb;
-    scop->face_nb = face_nb;
+    scop->face_nb = face_nb - 1;
     list_to_array(scop, vertex_list);
     list_to_array_texture(scop, textur_list);
     list_to_array_normal(scop, normal_list);
     list_to_array_face(scop, face_list);
 
-    if(!(scop->object = list_face_to_vertex(face_list, scop))) {
+    if (!(scop->object = list_face_to_vertex(face_list, scop)))
+    {
         printf("error obj\n");
         exit(1);
     }
-    print_vertex_face(scop->object);
+    //print_vertex_face(scop->object);
 
     //print_list_face_obj(scop);
 
-    print_array(scop->vertices, scop->size * 3);
-    print_array_vt(scop->texture, scop->textur_nb * 2);
-    print_array_vn(scop->normal, scop->normal_nb * 3);
+    //print_array(scop->vertices, scop->size * 3);
+    //print_array_vt(scop->texture, scop->textur_nb * 2);
+    //print_array_vn(scop->normal, scop->normal_nb * 3);
 
     //print_array_face(scop->faces_v, scop->face_nb * 3);
     //print_array_face_vt(scop->faces_vt, scop->textur_nb * 2);
