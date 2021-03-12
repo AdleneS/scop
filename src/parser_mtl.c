@@ -9,7 +9,7 @@ void load_file_mtl(char *mtl_name, t_scop *scop, char *path)
     printf("[%s]\n\n", path);
     if (!(file = fopen(path, "r")))
     {
-        printf("error testmtl");
+        printf("error testmtl\n");
         return;
     }
 

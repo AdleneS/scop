@@ -42,8 +42,8 @@ int main(int argc, char *argv[])
 	}
 	//print_list(v);
 	//print_array_face(scop->faces, scop->face_nb * 3);
-	print_array(scop->vertices, scop->size * 6);
-	print_array_vn(scop->normal, scop->normal_nb * 3);
+	//print_array(scop->vertices, scop->size * 6);
+	//print_array_vn(scop->normal, scop->normal_nb * 3);
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);

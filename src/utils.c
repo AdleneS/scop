@@ -216,10 +216,7 @@ void print_array(float *a, int s)
     int i = 0;
     while (i < s)
     {
-        if (i % 6 == 0)
-            printf("\n");
-
-        if (i % (18 * 2) == 0)
+        if (i % 3 == 0)
             printf("\n");
         printf("%f ", a[i]);
         i++;
@@ -366,4 +363,15 @@ void print_list_shader(t_shader tmp)
     printf("shader file vertexShaderLight :: \n%s\n\n\n", tmp.vertexShaderLight);
     printf("shader file fragmentShaderSource :: \n%s\n\n\n", tmp.fragmentShaderSource);
     printf("shader file vertexShaderSource :: \n%s\n\n\n", tmp.vertexShaderSource);
+}
+
+void print_vertex_face(t_vertex_face *list)
+{
+    while (list->next)
+    {
+        printf("v %f %f %f\n", list->vertex.x, list->vertex.y, list->vertex.z);
+        printf("t %f %f\n", list->texture.x, list->texture.y);
+        printf("n %f %f %f\n\n", list->normal.x, list->normal.y, list->normal.z);
+        list = list->next;
+    }
 }

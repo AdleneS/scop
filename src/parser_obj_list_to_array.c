@@ -135,3 +135,37 @@ void list_to_array_face(t_scop *scop, t_face *f)
     scop->faces_vt = faces_vt;
     scop->faces_vn = faces_vn;
 }
+
+t_vertex_face *list_face_to_vertex(t_face *list, t_scop *scop)
+{
+    t_vertex_face *_list = NULL;
+    int j = 1;
+
+    while (list->next)
+    {
+        for (int i = 0; i < 3; i++) {
+            t_vertex_face *new;
+            if (!(new = (t_vertex_face *)malloc(sizeof(t_vertex_face))))
+                exit(1);
+            new->vertex.x = scop->vertices[(list->vertex_indices[i] - 1) * 3];
+            new->vertex.y = scop->vertices[(list->vertex_indices[i] - 1) * 3 + 1];
+            new->vertex.z = scop->vertices[(list->vertex_indices[i] - 1) * 3 + 2];
+
+            if (i < 2) {
+                new->texture.x = scop->texture[(list->texture_indices[i] - 1) * 2];
+                new->texture.y = scop->texture[(list->texture_indices[i] - 1) * 2 + 1];
+            }
+
+            new->normal.x = scop->normal[(list->normal_indices[i] - 1) * 3];
+            new->normal.y = scop->normal[(list->normal_indices[i] - 1) * 3 + 1];
+            new->normal.z = scop->normal[(list->normal_indices[i] - 1) * 3 + 2];
+
+            printf("i = %d\n", list->texture_indices[i] - 1);
+
+            list_pushback_face_vertex(&_list, new);
+        }
+        j++;
+        list = list->next;
+    }
+    return _list;
+}
