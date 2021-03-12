@@ -42,20 +42,6 @@ void list_pushback_face(t_face **head, t_face *new)
     }
 }
 
-void list_pushback_face_vertex(t_vertex_face **head, t_vertex_face *new)
-{
-    t_vertex_face *tmp_f;
-    if (!*head)
-        *head = new;
-    else
-    {
-        tmp_f = *head;
-        while (tmp_f->next)
-            tmp_f = tmp_f->next;
-        tmp_f->next = new;
-    }
-}
-
 int count_char_in_string(char *str, char c)
 {
     int len = 0;

@@ -139,34 +139,32 @@ void list_to_array_face(t_scop *scop, t_face *f)
 t_vertex_face *list_face_to_vertex(t_face *_face, t_scop *scop)
 {
     t_face *list = _face;
-    t_vertex_face *_list = NULL;
-    int j = 1;
+    t_vertex_face *object = NULL;
+    int j = 0;
 
-    while (list->next)
+    if (!(object = (t_vertex_face *)malloc(sizeof(t_vertex_face) * scop->face_nb * 3)))
+        exit(1);
+
+    while (list)
     {
         for (int i = 0; i < 3; i++) {
-            t_vertex_face *new;
-            if (!(new = (t_vertex_face *)malloc(sizeof(t_vertex_face))))
-                exit(1);
-            new->vertex.x = scop->vertices[(list->vertex_indices[i] - 1) * 3];
-            new->vertex.y = scop->vertices[(list->vertex_indices[i] - 1) * 3 + 1];
-            new->vertex.z = scop->vertices[(list->vertex_indices[i] - 1) * 3 + 2];
+            object[j].vertex.x = scop->vertices[(list->vertex_indices[i] - 1) * 3];
+            object[j].vertex.y = scop->vertices[(list->vertex_indices[i] - 1) * 3 + 1];
+            object[j].vertex.z = scop->vertices[(list->vertex_indices[i] - 1) * 3 + 2];
 
             if (i < 2) {
-                new->texture.x = scop->texture[(list->texture_indices[i] - 1) * 2];
-                new->texture.y = scop->texture[(list->texture_indices[i] - 1) * 2 + 1];
+                object[j].texture.x = scop->texture[(list->texture_indices[i] - 1) * 2];
+                object[j].texture.y = scop->texture[(list->texture_indices[i] - 1) * 2 + 1];
             }
 
-            new->normal.x = scop->normal[(list->normal_indices[i] - 1) * 3];
-            new->normal.y = scop->normal[(list->normal_indices[i] - 1) * 3 + 1];
-            new->normal.z = scop->normal[(list->normal_indices[i] - 1) * 3 + 2];
+            object[j].normal.x = scop->normal[(list->normal_indices[i] - 1) * 3];
+            object[j].normal.y = scop->normal[(list->normal_indices[i] - 1) * 3 + 1];
+            object[j].normal.z = scop->normal[(list->normal_indices[i] - 1) * 3 + 2];
 
+            j++;
             printf("i = %d\n", list->texture_indices[i] - 1);
-
-            list_pushback_face_vertex(&_list, new);
         }
-        j++;
         list = list->next;
     }
-    return _list;
+    return object;
 }

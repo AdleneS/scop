@@ -62,13 +62,11 @@ int main(int argc, char *argv[])
 
 	glUseProgram(shaderProgram);
 
-	unsigned int VAO, VBO, EBO, EBON, Colors, normal;
+	unsigned int VAO, VBO, EBO, Colors;
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);
-	glGenBuffers(1, &EBON);
 	glGenBuffers(1, &Colors);
-	glGenBuffers(1, &normal);
 	// 1. bind Vertex Array Object
 	glBindVertexArray(VAO);
 	// 2. copy our vertices array in a buffer for OpenGL to use
@@ -80,10 +78,6 @@ int main(int argc, char *argv[])
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
 
-	glBindBuffer(GL_ARRAY_BUFFER, normal);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (scop->normal_nb * 3), scop->normal, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBON);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * (scop->face_nb * 3), scop->faces_vn, GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);

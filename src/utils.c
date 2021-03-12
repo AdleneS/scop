@@ -365,13 +365,12 @@ void print_list_shader(t_shader tmp)
     printf("shader file vertexShaderSource :: \n%s\n\n\n", tmp.vertexShaderSource);
 }
 
-void print_vertex_face(t_vertex_face *list)
+void print_vertex_face(t_vertex_face *object, int size)
 {
-    while (list->next)
+    for (int i = 0; i < size; i++)
     {
-        printf("v %f %f %f\n", list->vertex.x, list->vertex.y, list->vertex.z);
-        printf("t %f %f\n", list->texture.x, list->texture.y);
-        printf("n %f %f %f\n\n", list->normal.x, list->normal.y, list->normal.z);
-        list = list->next;
+        printf("v %f %f %f\n", object[i].vertex.x, object[i].vertex.y, object[i].vertex.z);
+        printf("t %f %f\n", object[i].texture.x, object[i].texture.y);
+        printf("n %f %f %f\n\n", object[i].normal.x, object[i].normal.y, object[i].normal.z);
     }
 }

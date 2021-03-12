@@ -182,7 +182,7 @@ void load_file_obj(char *filename, t_scop *scop)
         printf("error obj\n");
         exit(1);
     }
-    print_vertex_face(scop->object);
+    print_vertex_face(scop->object, scop->face_nb * 3);
 
     //print_list_face_obj(scop);
 
