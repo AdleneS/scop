@@ -35,6 +35,15 @@ typedef struct s_mat4
     float mat[4][4];
 } t_mat4;
 
+
+typedef struct s_vertex_face
+{
+    t_vector3f vertex;
+    t_vector2f texture;
+    t_vector3f normal;
+    struct s_vertex_face *next;
+} t_vertex_face;
+
 typedef struct s_scop
 {
     t_vec3 pos;
@@ -83,14 +92,6 @@ typedef struct s_face
     int normal_indices[4];
     struct s_face *next;
 } t_face;
-
-typedef struct s_vertex_face
-{
-    t_vector3f vertex;
-    t_vector2f texture;
-    t_vector3f normal;
-    struct s_vertex_face *next;
-} t_vertex_face;
 
 typedef struct s_shader
 {

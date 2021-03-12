@@ -178,8 +178,10 @@ void load_file_obj(char *filename, t_scop *scop)
     list_to_array_normal(scop, normal_list);
     list_to_array_face(scop, face_list);
 
-    if(!(scop->object = list_face_to_vertex(face_list, scop)))
+    if(!(scop->object = list_face_to_vertex(face_list, scop))) {
+        printf("error obj\n");
         exit(1);
+    }
     print_vertex_face(scop->object);
 
     //print_list_face_obj(scop);

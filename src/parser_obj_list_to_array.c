@@ -136,8 +136,9 @@ void list_to_array_face(t_scop *scop, t_face *f)
     scop->faces_vn = faces_vn;
 }
 
-t_vertex_face *list_face_to_vertex(t_face *list, t_scop *scop)
+t_vertex_face *list_face_to_vertex(t_face *_face, t_scop *scop)
 {
+    t_face *list = _face;
     t_vertex_face *_list = NULL;
     int j = 1;
 
