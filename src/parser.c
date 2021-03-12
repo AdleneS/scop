@@ -128,6 +128,7 @@ void load_file_obj(char *filename, t_scop *scop)
                     face->n_face = 4;
                     face_nb++;
                 }
+                
             }
             else
             {
@@ -182,13 +183,13 @@ void load_file_obj(char *filename, t_scop *scop)
         printf("error obj\n");
         exit(1);
     }
-    print_vertex_face(scop->object, scop->face_nb * 3);
+    //print_vertex_face(scop->object, scop->face_nb * 3);
 
     //print_list_face_obj(scop);
 
-    print_array(scop->vertices, scop->size * 3);
-    print_array_vt(scop->texture, scop->textur_nb * 2);
-    print_array_vn(scop->normal, scop->normal_nb * 3);
+    // print_array(scop->vertices, scop->size * 3);
+    // print_array_vt(scop->texture, scop->textur_nb * 2);
+    // print_array_vn(scop->normal, scop->normal_nb * 3);
 
     //print_array_face(scop->faces_v, scop->face_nb * 3);
     //print_array_face_vt(scop->faces_vt, scop->textur_nb * 2);

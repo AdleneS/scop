@@ -162,7 +162,6 @@ t_vertex_face *list_face_to_vertex(t_face *_face, t_scop *scop)
             object[j].normal.z = scop->normal[(list->normal_indices[i] - 1) * 3 + 2];
 
             j++;
-            printf("i = %d\n", list->texture_indices[i] - 1);
         }
         list = list->next;
     }
