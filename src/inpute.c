@@ -2,7 +2,7 @@
 
 void input_key(t_scop *scop, GLFWwindow *window)
 {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		scop->rot.x += 0.05;
@@ -28,10 +28,10 @@ void input_key(t_scop *scop, GLFWwindow *window)
 		scop->pos.y += 0.5;
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 		scop->pos.y -= 0.5;
-    double xpos, ypos;
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT))
-    {
-        glfwGetCursorPos(window, &xpos, &ypos);
-        printf("x = %f ; y = %f || scop x = %f ; scop y = %f\n", xpos, ypos, scop->pos.x, scop->pos.x);
-    }
+	double xpos, ypos;
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT))
+	{
+		glfwGetCursorPos(window, &xpos, &ypos);
+		printf("x = %f ; y = %f || scop x = %f ; scop y = %f\n", xpos, ypos, scop->pos.x, scop->pos.x);
+	}
 }

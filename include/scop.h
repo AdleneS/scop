@@ -9,7 +9,7 @@
 #include "../gl3w/include/GL/gl3w.h"
 #include "../glfw-3.3.2/include/GLFW/glfw3.h"
 
-typedef struct dirent	t_dirent;
+typedef struct dirent t_dirent;
 
 typedef struct s_vector2f
 {
@@ -34,7 +34,6 @@ typedef struct s_mat4
 {
     float mat[4][4];
 } t_mat4;
-
 
 typedef struct s_vertex_face
 {
@@ -100,7 +99,6 @@ typedef struct s_shader
     char *fragmentShaderLight;
 } t_shader;
 
-
 t_mat4 mat4x4_rotx(t_mat4 in, float angle);
 t_mat4 mat4x4_roty(t_mat4 in, float angle);
 t_mat4 mat4x4_rotz(t_mat4 in, float angle);
@@ -142,9 +140,9 @@ void print_array_face_vt(int *a, int s);
 void print_list_face_obj(t_scop *scop);
 void load_file_mtl(char *mtl_name, t_scop *scop, char *path);
 
-t_shader read_path(); 
+t_shader read_path();
 char *sort_path(char *path);
-char *join(const char* s1, const char* s2);
+char *join(const char *s1, const char *s2);
 void list_pushback_shader(t_shader **head, t_shader *new);
 void print_list_shader(t_shader tmp);
 unsigned int compile_shader_test(char *vertexSource, char *fragmentSource);
@@ -152,5 +150,6 @@ unsigned int compile_shader_test(char *vertexSource, char *fragmentSource);
 void input_key(t_scop *scop, GLFWwindow *window);
 void print_vertex_face(t_vertex_face *object, int size);
 t_vertex_face *list_face_to_vertex(t_face *list, t_scop *scop);
+void set_color(t_scop **scop);
 
 #endif

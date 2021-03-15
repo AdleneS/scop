@@ -169,3 +169,29 @@ t_vertex_face *list_face_to_vertex(t_face *_face, t_scop *scop)
     }
     return object;
 }
+
+void set_color(t_scop **scop)
+{
+
+    float r = 0.5;
+    float g = 0.5;
+    float b = 0.5;
+    printf("%d\n", (*scop)->face_nb * 3);
+    if (!((*scop)->colors = (float *)(malloc(sizeof(float) * ((*scop)->face_nb) * 9))))
+        exit(1);
+    for (int i = 0; i < (*scop)->face_nb * 9; i += 9)
+    {
+        (*scop)->colors[i] = fmod(r, 1);
+        (*scop)->colors[i + 1] = fmod(g, 1);
+        (*scop)->colors[i + 2] = fmod(b, 1);
+        (*scop)->colors[i + 3] = fmod(r, 1);
+        (*scop)->colors[i + 4] = fmod(g, 1);
+        (*scop)->colors[i + 5] = fmod(b, 1);
+        (*scop)->colors[i + 6] = fmod(r, 1);
+        (*scop)->colors[i + 7] = fmod(g, 1);
+        (*scop)->colors[i + 8] = fmod(b, 1);
+        r += 0.05;
+        g += 0.09;
+        b += 0.01;
+    }
+}
