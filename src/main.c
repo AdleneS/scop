@@ -6,7 +6,7 @@
 /*   By: asaba <asaba@student.42lyon.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/21 14:48:56 by slopez            #+#    #+#             */
-/*   Updated: 2021/03/12 17:02:55 by asaba            ###   ########lyon.fr   */
+/*   Updated: 2021/03/15 10:47:39 by asaba            ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,8 @@ int main(int argc, char *argv[])
 	{
 		load_file_obj(argv[1], scop);
 	}
-	print_vertex_face(scop->object);
+	print_vertex_face(scop->object, scop->face_nb * 3);
+	//print_vertex_face(scop->object, );
 	//print_array_face(scop->faces, scop->face_nb * 3);
 	//print_array(scop->vertices, scop->size * 6);
 	//print_array_vn(scop->normal, scop->normal_nb * 3);
@@ -111,7 +112,7 @@ int main(int argc, char *argv[])
 	//glEnableVertexAttribArray(0);
 
 	glEnable(GL_DEPTH_TEST);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //Polygon Mode wireframe
+	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //Polygon Mode wireframe
 	glDepthFunc(GL_LESS);
 	while (!glfwWindowShouldClose(window))
 	{
@@ -145,24 +146,26 @@ int main(int argc, char *argv[])
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &scop->projection.mat[0][0]);
 
 		GLfloat objColor[3] = {1.0f, 1.0f, 1.0f};
-		GLfloat ligColor[3] = {1.0f, .5f, 1.0f};
-		GLfloat ligPos[3] = {0.0f, 50.0f, 0.0f};
+		GLfloat ligColor[3] = {1.0f, .5f, .0f};
+		GLfloat ligPos[3] = {10.0f, 100.0f, 5.0f};
 		glUniform3fv(objectColor, 1, objColor);
 		glUniform3fv(lightColor, 1, ligColor);
 		glUniform3fv(lightPos, 1, ligPos);
 
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, scop->face_nb * 3);
-		//glDrawElements(GL_TRIANGLES, scop->face_nb, GL_UNSIGNED_INT, 0);
+		// glDrawElements(GL_TRIANGLES, scop->face_nb, GL_UNSIGNED_INT, 0);
 		//glBindVertexArray(0);
 		glUseProgram(shaderProgramLight);
-		//t_mat4 lModel;
+		// t_mat4 lModel;
 
 		// init_mat4(&lModel);
 		// viewLoc = glGetUniformLocation(shaderProgramLight, "view");
 		// projectionLoc = glGetUniformLocation(shaderProgramLight, "projection");
 		// lModel = v_add((t_vec3){ligPos[0], ligPos[1], ligPos[2], 1.0f});
-		// glDrawElements(GL_TRIANGLES, scop->face_nb * 3, GL_UNSIGNED_INT, 0);
+		// // glDrawElements(GL_TRIANGLES, scop->face_nb * 3, GL_UNSIGNED_INT, 0);
+		// glDrawArrays(GL_TRIANGLES, 0, scop->face_nb * 3);
+
 		// modelLoc = glGetUniformLocation(shaderProgramLight, "model");
 		// glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &lModel.mat[0][0]);
 		// glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &scop->view.mat[0][0]);

@@ -41,7 +41,6 @@ typedef struct s_vertex_face
     t_vector3f vertex;
     t_vector2f texture;
     t_vector3f normal;
-    struct s_vertex_face *next;
 } t_vertex_face;
 
 typedef struct s_scop
@@ -151,8 +150,7 @@ void print_list_shader(t_shader tmp);
 unsigned int compile_shader_test(char *vertexSource, char *fragmentSource);
 
 void input_key(t_scop *scop, GLFWwindow *window);
-void list_pushback_face_vertex(t_vertex_face **head, t_vertex_face *new);
-void print_vertex_face(t_vertex_face *list);
+void print_vertex_face(t_vertex_face *object, int size);
 t_vertex_face *list_face_to_vertex(t_face *list, t_scop *scop);
 
 #endif
