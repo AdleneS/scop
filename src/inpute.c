@@ -28,6 +28,14 @@ void input_key(t_scop *scop, GLFWwindow *window)
 		scop->pos.y += 0.5;
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 		scop->pos.y -= 0.5;
+	static int oldState = GLFW_PRESS;
+	int newState = glfwGetKey(window, GLFW_KEY_LEFT_ALT);
+	if (newState == GLFW_PRESS && oldState == GLFW_RELEASE)
+	{
+		scop->faceColors = !scop->faceColors;
+	}
+	oldState = newState;
+
 	double xpos, ypos;
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT))
 	{

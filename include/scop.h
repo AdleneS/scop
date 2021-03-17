@@ -60,6 +60,7 @@ typedef struct s_scop
     int face_nb;
     int textur_nb;
     int normal_nb;
+    int faceColors;
     t_vertex_face *object;
 } t_scop;
 
@@ -151,5 +152,6 @@ void input_key(t_scop *scop, GLFWwindow *window);
 void print_vertex_face(t_vertex_face *object, int size);
 t_vertex_face *list_face_to_vertex(t_face *list, t_scop *scop);
 void set_color(t_scop **scop);
+GLuint loadTex(const char *imagePath);
 
 #endif

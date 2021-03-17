@@ -153,11 +153,8 @@ t_vertex_face *list_face_to_vertex(t_face *_face, t_scop *scop)
             object[j].vertex.y = scop->vertices[(list->vertex_indices[i] - 1) * 3 + 1];
             object[j].vertex.z = scop->vertices[(list->vertex_indices[i] - 1) * 3 + 2];
 
-            if (i < 2)
-            {
-                object[j].texture.x = scop->texture[(list->texture_indices[i] - 1) * 2];
-                object[j].texture.y = scop->texture[(list->texture_indices[i] - 1) * 2 + 1];
-            }
+            object[j].texture.x = scop->texture[(list->texture_indices[i] - 1) * 2];
+            object[j].texture.y = scop->texture[(list->texture_indices[i] - 1) * 2 + 1];
 
             object[j].normal.x = scop->normal[(list->normal_indices[i] - 1) * 3];
             object[j].normal.y = scop->normal[(list->normal_indices[i] - 1) * 3 + 1];
@@ -176,7 +173,6 @@ void set_color(t_scop **scop)
     float r = 0.5;
     float g = 0.5;
     float b = 0.5;
-    printf("%d\n", (*scop)->face_nb * 3);
     if (!((*scop)->colors = (float *)(malloc(sizeof(float) * ((*scop)->face_nb) * 9))))
         exit(1);
     for (int i = 0; i < (*scop)->face_nb * 9; i += 9)

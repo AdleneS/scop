@@ -4,25 +4,25 @@ char *sort_file_shader(char *_path)
 {
 	char *buffer = NULL;
 	long length = 0;
-	FILE * f = fopen(_path, "r");
+	FILE *f = fopen(_path, "r");
 
 	if (f)
 	{
-  		fseek(f, 0, SEEK_END);
-  		length = ftell(f);
-  		fseek(f, 0, SEEK_SET);
-  		if (!(buffer = (char *)malloc(length)))
-		  	return NULL;
-    	fread(buffer, 1, length, f);
+		fseek(f, 0, SEEK_END);
+		length = ftell(f);
+		fseek(f, 0, SEEK_SET);
+		if (!(buffer = (char *)malloc(length)))
+			return NULL;
+		fread(buffer, 1, length, f);
 		buffer[length] = '\0';
-  		fclose(f);
+		fclose(f);
 	}
 	return strdup(buffer);
 }
 
 t_shader read_path()
 {
-	const char *path = "./util/";
+	const char *path = "./shaders/";
 	DIR *dir;
 	t_dirent *rd;
 	t_shader shader;

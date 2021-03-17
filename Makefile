@@ -10,6 +10,7 @@ SRCS 	= main.c\
 			parser_util.c\
 			compile_shader.c\
 			inpute.c\
+			bmp_parser.c\
 
 
 OBJ_DIR = ./.objs
