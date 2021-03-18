@@ -29,7 +29,6 @@ int main(int argc, char *argv[])
 	{
 		load_file_obj(argv[1], scop);
 	}
-	set_color(&scop);
 	//print_array(scop->colors, scop->face_nb * 9);
 	//print_vertex_face(scop->object, scop->face_nb * 3);
 	//print_vertex_face(scop->object, );
@@ -48,7 +47,7 @@ int main(int argc, char *argv[])
 	GLFWwindow *window = glfwCreateWindow(1920, 1080, "SCOP", NULL, NULL); // Windowed
 	glfwMakeContextCurrent(window);
 	gl3wInit();
-	GLint tex = loadTex("./textures/bedu2.jpg");
+	GLint tex = loadTex("./textures/mando.png");
 
 	//Init Shaders and compile it
 	unsigned int shaderProgram = compile_shader_test(shader.vertexShaderSource, shader.fragmentShaderSource);

@@ -7,9 +7,11 @@ void load_file_obj(char *filename, t_scop *scop)
     t_vertex *normal_list = NULL;
     t_texture *textur_list = NULL;
     t_face *face_list = NULL;
+    t_material *materials = NULL;
 
-    int vertex_nb = 0;
+    int texture_index = 0;
     int texture_nb = 0;
+    int vertex_nb = 0;
     int normal_nb = 0;
     int face_nb = 0;
     short int checkVn = 0;
@@ -27,7 +29,7 @@ void load_file_obj(char *filename, t_scop *scop)
             char mtl_name[1024];
             char *path = sort_path(filename);
             sscanf(line, "mtllib %s", mtl_name);
-            load_file_mtl(mtl_name, scop, path);
+            materials = load_file_mtl(mtl_name, scop, path);
         }
 
         if (strncmp(line, "v ", 2) == 0)
@@ -65,10 +67,9 @@ void load_file_obj(char *filename, t_scop *scop)
         if (strncmp(line, "vn ", 3) == 0)
         {
             t_vertex *normal;
+
             if (!(normal = malloc(sizeof(t_vertex))))
-            {
                 exit(1);
-            }
             normal->next = NULL;
             sscanf(line, "vn %f %f %f", &normal->v.x, &normal->v.y, &normal->v.z);
             normal_nb++;
@@ -80,12 +81,10 @@ void load_file_obj(char *filename, t_scop *scop)
         if (strncmp(line, "f ", 2) == 0)
         {
             t_face *face;
-            if (!(face = malloc(sizeof(t_face))))
-            {
-                exit(1);
-            }
-            face->next = NULL;
 
+            if (!(face = malloc(sizeof(t_face))))
+                exit(1);
+            face->next = NULL;
             if (count_char_in_string(line, ' ') >= 4)
             {
                 if (checkVt && checkVn)
@@ -164,10 +163,16 @@ void load_file_obj(char *filename, t_scop *scop)
                     face->n_face = 3;
                 }
             }
+            face->texture_index = texture_index;
             face_nb++;
             list_pushback_face(&face_list, face);
         }
+        if (strncmp(line, "usemtl", 6) == 0)
+        {
+            texture_index++;
+        }
     }
+    printf("%s", "READ DONE\n");
 
     scop->size = vertex_nb;
     scop->textur_nb = texture_nb;
@@ -177,7 +182,7 @@ void load_file_obj(char *filename, t_scop *scop)
     list_to_array_texture(scop, textur_list);
     list_to_array_normal(scop, normal_list);
     //list_to_array_face(scop, face_list);
-
+    set_color(&scop, face_list, materials);
     if (!(scop->object = list_face_to_vertex(face_list, scop)))
     {
         printf("error obj\n");

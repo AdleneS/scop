@@ -42,6 +42,14 @@ typedef struct s_vertex_face
     t_vector3f normal;
 } t_vertex_face;
 
+typedef struct s_material
+{
+    float r;
+    float g;
+    float b;
+    struct s_material *next;
+} t_material;
+
 typedef struct s_scop
 {
     t_vec3 pos;
@@ -68,7 +76,7 @@ typedef struct s_mtl
 {
     char *newmtl;
     t_vec3 Kd;
-    struct s_vertex *next;
+    struct s_mtl *next;
 } t_mtl;
 
 typedef struct s_vertex
@@ -86,6 +94,7 @@ typedef struct s_texture
 typedef struct s_face
 {
     int n_face;
+    int texture_index;
     int vertex_indices[4];
     int texture_indices[4];
     int normal_indices[4];
@@ -139,7 +148,7 @@ void list_to_array_texture(t_scop *scop, t_texture *v);
 void list_to_array_normal(t_scop *scop, t_vertex *v);
 void print_array_face_vt(int *a, int s);
 void print_list_face_obj(t_scop *scop);
-void load_file_mtl(char *mtl_name, t_scop *scop, char *path);
+t_material *load_file_mtl(char *mtl_name, t_scop *scop, char *path);
 
 t_shader read_path();
 char *sort_path(char *path);
@@ -151,7 +160,9 @@ unsigned int compile_shader_test(char *vertexSource, char *fragmentSource);
 void input_key(t_scop *scop, GLFWwindow *window);
 void print_vertex_face(t_vertex_face *object, int size);
 t_vertex_face *list_face_to_vertex(t_face *list, t_scop *scop);
-void set_color(t_scop **scop);
+void set_color(t_scop **scop, t_face *face, t_material *mat);
 GLuint loadTex(const char *imagePath);
+void list_pushback_mat(t_material **head, t_material *new);
+void print_list_material(t_material *list);
 
 #endif

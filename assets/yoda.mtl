@@ -120,7 +120,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 3
-map_Bump -bm 0.300000 /Users/beduroule/Downloads/mandalorian-the-child-the-force (1)/source/D:/artworks/char/yodababy/UV1_BY_bump.png
+map_Bump -bm 0.300000 (1)/source/D:/artworks/char/yodababy/UV1_BY_bump.png
 
 newmtl sphere1
 Ns 18.000005

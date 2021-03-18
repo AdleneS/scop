@@ -323,6 +323,20 @@ void print_list_vn(t_vertex *list)
     printf("%d/n/n", i);
 }
 
+void print_list_material(t_material *list)
+{
+    t_material *tmp;
+
+    tmp = list;
+    int i = 0;
+    while (tmp != NULL)
+    {
+        printf("Kd %f  %f  %f\n", tmp->r, tmp->g, tmp->b);
+        i++;
+        tmp = tmp->next;
+    }
+}
+
 void print_list_face(t_face *list)
 {
     t_face *tmp;
@@ -331,6 +345,7 @@ void print_list_face(t_face *list)
     int i = 0;
     while (tmp != NULL)
     {
+        printf("tex_nb = %d\n", tmp->texture_index);
         if (tmp->n_face == 4)
         {
             printf("f %d  %d  %d  %d\n", tmp->vertex_indices[0], tmp->vertex_indices[1], tmp->vertex_indices[2], tmp->vertex_indices[3]);
