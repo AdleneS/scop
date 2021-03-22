@@ -28,19 +28,19 @@ void list_pushback_tex(t_texture **head, t_texture *new)
     }
 }
 
-void list_pushback_mat(t_material **head, t_material *new)
-{
-    t_material *tmp_m;
-    if (!*head)
-        *head = new;
-    else
-    {
-        tmp_m = *head;
-        while (tmp_m->next)
-            tmp_m = tmp_m->next;
-        tmp_m->next = new;
-    }
-}
+// void list_pushback_mat(t_material **head, t_material *new)
+// {
+//     t_material *tmp_m;
+//     if (!*head)
+//         *head = new;
+//     else
+//     {
+//         tmp_m = *head;
+//         while (tmp_m->next)
+//             tmp_m = tmp_m->next;
+//         tmp_m->next = new;
+//     }
+// }
 
 void list_pushback_face(t_face **head, t_face *new)
 {
@@ -52,6 +52,7 @@ void list_pushback_face(t_face **head, t_face *new)
         tmp_f = *head;
         while (tmp_f->next)
             tmp_f = tmp_f->next;
+
         tmp_f->next = new;
     }
 }

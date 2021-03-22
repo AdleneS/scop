@@ -16,6 +16,10 @@
         "utility": "c",
         "vector": "c",
         "scop.h": "c",
-        "__locale": "c"
+        "__locale": "c",
+        "typeinfo": "c",
+        "__bit_reference": "c",
+        "algorithm": "c",
+        "chrono": "c"
     }
 }

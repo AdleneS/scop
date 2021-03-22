@@ -44,10 +44,10 @@ typedef struct s_vertex_face
 
 typedef struct s_material
 {
+    char texture_name[32];
     float r;
     float g;
     float b;
-    struct s_material *next;
 } t_material;
 
 typedef struct s_scop
@@ -68,6 +68,7 @@ typedef struct s_scop
     int face_nb;
     int textur_nb;
     int normal_nb;
+    int material_nb;
     int faceColors;
     t_vertex_face *object;
 } t_scop;
@@ -95,6 +96,7 @@ typedef struct s_face
 {
     int n_face;
     int texture_index;
+    char texture_name[32];
     int vertex_indices[4];
     int texture_indices[4];
     int normal_indices[4];

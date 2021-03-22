@@ -35,7 +35,6 @@ int main(int argc, char *argv[])
 	//print_array_face(scop->faces, scop->face_nb * 3);
 	//print_array(scop->vertices, scop->size * 6);
 	//print_array_vn(scop->normal, scop->normal_nb * 3);
-
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
@@ -51,7 +50,7 @@ int main(int argc, char *argv[])
 
 	//Init Shaders and compile it
 	unsigned int shaderProgram = compile_shader_test(shader.vertexShaderSource, shader.fragmentShaderSource);
-	unsigned int shaderProgramLight = compile_shader_test(shader.vertexShaderLight, shader.fragmentShaderLight);
+	//unsigned int shaderProgramLight = compile_shader_test(shader.vertexShaderLight, shader.fragmentShaderLight);
 
 	glUseProgram(shaderProgram);
 

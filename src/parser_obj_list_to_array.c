@@ -176,23 +176,29 @@ t_vertex_face *list_face_to_vertex(t_face *_face, t_scop *scop)
 void set_color(t_scop **scop, t_face *face, t_material *mat)
 {
     t_face *tmp = face;
-    t_material *tmp_m = mat;
-    float r = tmp_m->r;
-    float g = tmp_m->g;
-    float b = tmp_m->b;
+    float r = 0;
+    float g = 0;
+    float b = 0;
     int i = 0;
-    int current_mat = tmp->texture_index;
+    int current_mat = -1;
     if (!((*scop)->colors = (float *)(malloc(sizeof(float) * ((*scop)->face_nb) * 9))))
         exit(1);
     while (tmp)
     {
         if (tmp->texture_index != current_mat)
         {
-            r = tmp_m->r;
-            g = tmp_m->g;
-            b = tmp_m->b;
             current_mat = tmp->texture_index;
-            tmp_m = tmp_m->next;
+           
+            for (int j = 0; j < (*scop)->material_nb; j++)
+            {
+                if (strcmp(mat[j].texture_name, tmp->texture_name) == 0)
+                {
+                    r = mat[j].r;
+                    g = mat[j].g;
+                    b = mat[j].b;
+                    break;
+                }
+            }
         }
         (*scop)->colors[i] = r;
         (*scop)->colors[i + 1] = g;

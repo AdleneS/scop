@@ -1,14 +1,96 @@
 #include "scop.h"
 
+void file_obj_size(char *filename, t_scop *scop)
+{
+    FILE *file;
+
+    int texture_nb = 0;
+    int vertex_nb = 0;
+    int normal_nb = 0;
+    int face_nb = 0;
+    short int checkVn = 0;
+    short int checkVt = 0;
+    if (!(file = fopen(filename, "r")))
+        exit(1);
+
+    char line[1024];
+
+    while (fgets(line, 1024, file))
+    {
+        if (strncmp(line, "v ", 2) == 0)
+        {
+            vertex_nb++;
+            if (checkVn || checkVt)
+            {
+                checkVn = 0;
+                checkVt = 0;
+            }
+        }
+
+        if (strncmp(line, "vt ", 3) == 0)
+        {
+            texture_nb++;
+            checkVt = 1;
+        }
+
+        if (strncmp(line, "vn ", 3) == 0)
+        {
+            normal_nb++;
+            checkVt = 1;
+            checkVn = 1;
+        }
+        if (strncmp(line, "usemtl", 6) == 0)
+        {
+        }
+        if (strncmp(line, "f ", 2) == 0)
+        {
+            face_nb++;
+            if (count_char_in_string(line, ' ') >= 4)
+            {
+                if (checkVt && checkVn)
+                {
+                }
+                else if (checkVt)
+                {
+                }
+                else if (checkVn)
+                {
+                }
+                else
+                {
+                }
+            }
+            else
+            {
+                if (checkVt && checkVn)
+                {
+                }
+                else if (checkVt)
+                {
+                }
+                else if (checkVn)
+                {
+                }
+                else
+                {
+                }
+            }
+        }
+    }
+    printf("v: %d | vt: %d | n: %d | f: %d\n", vertex_nb, texture_nb, normal_nb, face_nb);
+    fclose(file);
+}
+
 void load_file_obj(char *filename, t_scop *scop)
 {
+    file_obj_size(filename, scop);
     FILE *file;
     t_vertex *vertex_list = NULL;
     t_vertex *normal_list = NULL;
     t_texture *textur_list = NULL;
     t_face *face_list = NULL;
     t_material *materials = NULL;
-
+    char texture_name[32] = "";
     int texture_index = 0;
     int texture_nb = 0;
     int vertex_nb = 0;
@@ -77,7 +159,11 @@ void load_file_obj(char *filename, t_scop *scop)
             checkVt = 1;
             checkVn = 1;
         }
-
+        if (strncmp(line, "usemtl", 6) == 0)
+        {
+            sscanf(line, "usemtl %s", &texture_name[0]);
+            texture_index++;
+        }
         if (strncmp(line, "f ", 2) == 0)
         {
             t_face *face;
@@ -164,12 +250,9 @@ void load_file_obj(char *filename, t_scop *scop)
                 }
             }
             face->texture_index = texture_index;
+            strcat(face->texture_name, texture_name);
             face_nb++;
             list_pushback_face(&face_list, face);
-        }
-        if (strncmp(line, "usemtl", 6) == 0)
-        {
-            texture_index++;
         }
     }
     printf("%s", "READ DONE\n");
