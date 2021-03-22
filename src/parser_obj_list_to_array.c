@@ -12,7 +12,6 @@ t_vertex_face *list_face_to_vertex(t_face *face, t_scop *scop)
     {
         for (int i = 0; i < 3; i++)
         {
-            //printf("%f\n ", scop->vertices[(face[face_i].vertex_indices[i] - 1)].v.x);
             object[j].vertex.x = scop->vertices[(face[face_i].vertex_indices[i] - 1)].v.x;
             object[j].vertex.y = scop->vertices[(face[face_i].vertex_indices[i] - 1)].v.y;
             object[j].vertex.z = scop->vertices[(face[face_i].vertex_indices[i] - 1)].v.z;
@@ -27,7 +26,7 @@ t_vertex_face *list_face_to_vertex(t_face *face, t_scop *scop)
         }
         face_i++;
     }
-    printf("%s", "FACE TO VERTEX DONE\n");
+    printf("%s", "\033[0;33m✓ \033[0;32mFACE TO VERTEX DONE\n\033[0;37m");
 
     return object;
 }
@@ -72,5 +71,5 @@ void set_color(t_scop **scop, t_face *face, t_material *mat)
         i += 9;
         face_i++;
     }
-    printf("%s", "SET COLOR DONE\n");
+    printf("%s", "\033[0;33m✓ \033[0;32mSET COLOR DONE\n\033[0;37m");
 }

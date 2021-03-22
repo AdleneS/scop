@@ -50,6 +50,7 @@ void load_file_obj(char *filename, t_scop *scop)
     int normal_i = 0;
     int texture_i = 0;
     int face_i = 0;
+    int process = 0;
     short int checkVn = 0;
     short int checkVt = 0;
 
@@ -69,6 +70,7 @@ void load_file_obj(char *filename, t_scop *scop)
 
     while (fgets(line, 1024, file))
     {
+        process++;
         if (strncmp(line, "mtllib ", 7) == 0)
         {
             char mtl_name[1024];
@@ -192,7 +194,7 @@ void load_file_obj(char *filename, t_scop *scop)
             face_i++;
         }
     }
-    printf("%s", "READ DONE\n");
+    printf("%s", "\033[0;33m✓ \033[0;32mREAD DONE\n\033[0;37m");
     scop->vertices = vertex;
     scop->normal = normal;
     scop->texture = texture;
