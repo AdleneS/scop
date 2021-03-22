@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
 	GLFWwindow *window = glfwCreateWindow(1920, 1080, "SCOP", NULL, NULL); // Windowed
 	glfwMakeContextCurrent(window);
 	gl3wInit();
-	GLint tex = loadTex("./textures/mando.png");
+	GLint tex = loadTex("./textures/bedu.jpg");
 
 	//Init Shaders and compile it
 	unsigned int shaderProgram = compile_shader_test(shader.vertexShaderSource, shader.fragmentShaderSource);
@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(t_vertex_face), (void *)offsetof(t_vertex_face, normal));
 
-	printf("\n%d | %d \n", scop->size, scop->face_nb);
+	printf("\n%d | %d \n", scop->vertex_nb, scop->face_nb);
 	// 3. then set our vertex attributes pointers
 
 	// Activate the model's color Buffer Object

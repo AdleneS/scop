@@ -8,8 +8,7 @@ void file_obj_size(char *filename, t_scop *scop)
     int vertex_nb = 0;
     int normal_nb = 0;
     int face_nb = 0;
-    short int checkVn = 0;
-    short int checkVt = 0;
+
     if (!(file = fopen(filename, "r")))
         exit(1);
 
@@ -18,65 +17,18 @@ void file_obj_size(char *filename, t_scop *scop)
     while (fgets(line, 1024, file))
     {
         if (strncmp(line, "v ", 2) == 0)
-        {
             vertex_nb++;
-            if (checkVn || checkVt)
-            {
-                checkVn = 0;
-                checkVt = 0;
-            }
-        }
-
         if (strncmp(line, "vt ", 3) == 0)
-        {
             texture_nb++;
-            checkVt = 1;
-        }
-
         if (strncmp(line, "vn ", 3) == 0)
-        {
             normal_nb++;
-            checkVt = 1;
-            checkVn = 1;
-        }
-        if (strncmp(line, "usemtl", 6) == 0)
-        {
-        }
         if (strncmp(line, "f ", 2) == 0)
-        {
             face_nb++;
-            if (count_char_in_string(line, ' ') >= 4)
-            {
-                if (checkVt && checkVn)
-                {
-                }
-                else if (checkVt)
-                {
-                }
-                else if (checkVn)
-                {
-                }
-                else
-                {
-                }
-            }
-            else
-            {
-                if (checkVt && checkVn)
-                {
-                }
-                else if (checkVt)
-                {
-                }
-                else if (checkVn)
-                {
-                }
-                else
-                {
-                }
-            }
-        }
     }
+    scop->face_nb = face_nb;
+    scop->normal_nb = normal_nb;
+    scop->vertex_nb = vertex_nb;
+    scop->texture_nb = texture_nb;
     printf("v: %d | vt: %d | n: %d | f: %d\n", vertex_nb, texture_nb, normal_nb, face_nb);
     fclose(file);
 }
@@ -85,19 +37,31 @@ void load_file_obj(char *filename, t_scop *scop)
 {
     file_obj_size(filename, scop);
     FILE *file;
-    t_vertex *vertex_list = NULL;
-    t_vertex *normal_list = NULL;
-    t_texture *textur_list = NULL;
-    t_face *face_list = NULL;
+    t_vertex *vertex;
+    t_normal *normal;
+    t_texture *texture;
+    t_face *face;
+
     t_material *materials = NULL;
     char texture_name[32] = "";
     int texture_index = 0;
-    int texture_nb = 0;
-    int vertex_nb = 0;
-    int normal_nb = 0;
-    int face_nb = 0;
+
+    int vertex_i = 0;
+    int normal_i = 0;
+    int texture_i = 0;
+    int face_i = 0;
     short int checkVn = 0;
     short int checkVt = 0;
+
+    if (!(vertex = malloc(sizeof(t_vertex) * scop->vertex_nb)))
+        exit(1);
+    if (!(normal = malloc(sizeof(t_normal) * scop->normal_nb)))
+        exit(1);
+    if (!(texture = malloc(sizeof(t_texture) * scop->texture_nb)))
+        exit(1);
+    if (!(face = malloc(sizeof(t_face) * scop->face_nb)))
+        exit(1);
+
     if (!(file = fopen(filename, "r")))
         exit(1);
 
@@ -105,7 +69,6 @@ void load_file_obj(char *filename, t_scop *scop)
 
     while (fgets(line, 1024, file))
     {
-
         if (strncmp(line, "mtllib ", 7) == 0)
         {
             char mtl_name[1024];
@@ -121,41 +84,21 @@ void load_file_obj(char *filename, t_scop *scop)
                 checkVn = 0;
                 checkVt = 0;
             }
-            t_vertex *vertex;
-            if (!(vertex = malloc(sizeof(t_vertex))))
-            {
-                exit(1);
-            }
-            vertex->next = NULL;
-            sscanf(line, "v %f %f %f", &vertex->v.x, &vertex->v.y, &vertex->v.z);
-            vertex_nb++;
-            list_pushback(&vertex_list, vertex);
+            sscanf(line, "v %f %f %f", &vertex[vertex_i].v.x, &vertex[vertex_i].v.y, &vertex[vertex_i].v.z);
+            vertex_i++;
         }
 
         if (strncmp(line, "vt ", 3) == 0)
         {
-            t_texture *texture;
-            if (!(texture = malloc(sizeof(t_texture))))
-            {
-                exit(1);
-            }
-            texture->next = NULL;
-            sscanf(line, "vt %f %f", &texture->v.x, &texture->v.y);
-            texture_nb++;
-            list_pushback_tex(&textur_list, texture);
+            sscanf(line, "vt %f %f", &texture[texture_i].v.x, &texture[texture_i].v.y);
+            texture_i++;
             checkVt = 1;
         }
 
         if (strncmp(line, "vn ", 3) == 0)
         {
-            t_vertex *normal;
-
-            if (!(normal = malloc(sizeof(t_vertex))))
-                exit(1);
-            normal->next = NULL;
-            sscanf(line, "vn %f %f %f", &normal->v.x, &normal->v.y, &normal->v.z);
-            normal_nb++;
-            list_pushback(&normal_list, normal);
+            sscanf(line, "vn %f %f %f", &normal[normal_i].v.x, &normal[normal_i].v.y, &normal[normal_i].v.z);
+            normal_i++;
             checkVt = 1;
             checkVn = 1;
         }
@@ -166,52 +109,47 @@ void load_file_obj(char *filename, t_scop *scop)
         }
         if (strncmp(line, "f ", 2) == 0)
         {
-            t_face *face;
-
-            if (!(face = malloc(sizeof(t_face))))
-                exit(1);
-            face->next = NULL;
             if (count_char_in_string(line, ' ') >= 4)
             {
                 if (checkVt && checkVn)
                 {
                     sscanf(line, "f %d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d",
-                           &face->vertex_indices[0], &face->texture_indices[0], &face->normal_indices[0],
-                           &face->vertex_indices[1], &face->texture_indices[1], &face->normal_indices[1],
-                           &face->vertex_indices[2], &face->texture_indices[2], &face->normal_indices[2],
-                           &face->vertex_indices[3], &face->texture_indices[3], &face->normal_indices[3]);
-                    face->n_face = 4;
-                    face_nb++;
+                           &face[face_i].vertex_indices[0], &face[face_i].texture_indices[0], &face[face_i].normal_indices[0],
+                           &face[face_i].vertex_indices[1], &face[face_i].texture_indices[1], &face[face_i].normal_indices[1],
+                           &face[face_i].vertex_indices[2], &face[face_i].texture_indices[2], &face[face_i].normal_indices[2],
+                           &face[face_i].vertex_indices[3], &face[face_i].texture_indices[3], &face[face_i].normal_indices[3]);
+                    face[face_i].n_face = 4;
+                    face_i++;
                 }
                 else if (checkVt)
                 {
                     sscanf(line, "f %d/%d %d/%d %d/%d %d/%d",
-                           &face->vertex_indices[0], &face->texture_indices[0],
-                           &face->vertex_indices[1], &face->texture_indices[1],
-                           &face->vertex_indices[2], &face->texture_indices[2],
-                           &face->vertex_indices[3], &face->texture_indices[3]);
-                    face->n_face = 4;
-                    face_nb++;
+                           &face[face_i].vertex_indices[0], &face[face_i].texture_indices[0],
+                           &face[face_i].vertex_indices[1], &face[face_i].texture_indices[1],
+                           &face[face_i].vertex_indices[2], &face[face_i].texture_indices[2],
+                           &face[face_i].vertex_indices[3], &face[face_i].texture_indices[3]);
+                    face[face_i].n_face = 4;
+                    face_i++;
                 }
                 else if (checkVn)
                 {
                     sscanf(line, "f %d/%d %d/%d %d/%d %d/%d",
-                           &face->vertex_indices[0], &face->normal_indices[0],
-                           &face->vertex_indices[1], &face->normal_indices[1],
-                           &face->vertex_indices[2], &face->normal_indices[2],
-                           &face->vertex_indices[3], &face->normal_indices[3]);
-                    face->n_face = 4;
-                    face_nb++;
+                           &face[face_i].vertex_indices[0], &face[face_i].normal_indices[0],
+                           &face[face_i].vertex_indices[1], &face[face_i].normal_indices[1],
+                           &face[face_i].vertex_indices[2], &face[face_i].normal_indices[2],
+                           &face[face_i].vertex_indices[3], &face[face_i].normal_indices[3]);
+                    face[face_i].n_face = 4;
+                    face_i++;
                 }
                 else
                 {
                     sscanf(line, "f %d %d %d %d",
-                           &face->vertex_indices[0],
-                           &face->vertex_indices[1],
-                           &face->vertex_indices[2],
-                           &face->vertex_indices[3]);
-                    face->n_face = 4;
-                    face_nb++;
+                           &face[face_i].vertex_indices[0],
+                           &face[face_i].vertex_indices[1],
+                           &face[face_i].vertex_indices[2],
+                           &face[face_i].vertex_indices[3]);
+                    face[face_i].n_face = 4;
+                    face_i++;
                 }
             }
             else
@@ -219,58 +157,57 @@ void load_file_obj(char *filename, t_scop *scop)
                 if (checkVt && checkVn)
                 {
                     sscanf(line, "f %d/%d/%d %d/%d/%d %d/%d/%d",
-                           &face->vertex_indices[0], &face->texture_indices[0], &face->normal_indices[0],
-                           &face->vertex_indices[1], &face->texture_indices[1], &face->normal_indices[1],
-                           &face->vertex_indices[2], &face->texture_indices[2], &face->normal_indices[2]);
+                           &face[face_i].vertex_indices[0], &face[face_i].texture_indices[0], &face[face_i].normal_indices[0],
+                           &face[face_i].vertex_indices[1], &face[face_i].texture_indices[1], &face[face_i].normal_indices[1],
+                           &face[face_i].vertex_indices[2], &face[face_i].texture_indices[2], &face[face_i].normal_indices[2]);
                     face->n_face = 3;
                 }
                 else if (checkVt)
                 {
                     sscanf(line, "f %d/%d %d/%d %d/%d",
-                           &face->vertex_indices[0], &face->texture_indices[0],
-                           &face->vertex_indices[1], &face->texture_indices[1],
-                           &face->vertex_indices[2], &face->texture_indices[2]);
+                           &face[face_i].vertex_indices[0], &face[face_i].texture_indices[0],
+                           &face[face_i].vertex_indices[1], &face[face_i].texture_indices[1],
+                           &face[face_i].vertex_indices[2], &face[face_i].texture_indices[2]);
                     face->n_face = 3;
                 }
                 else if (checkVn)
                 {
                     sscanf(line, "f %d/%d %d/%d %d/%d",
-                           &face->vertex_indices[0], &face->normal_indices[0],
-                           &face->vertex_indices[1], &face->normal_indices[1],
-                           &face->vertex_indices[2], &face->normal_indices[2]);
+                           &face[face_i].vertex_indices[0], &face[face_i].normal_indices[0],
+                           &face[face_i].vertex_indices[1], &face[face_i].normal_indices[1],
+                           &face[face_i].vertex_indices[2], &face[face_i].normal_indices[2]);
                     face->n_face = 3;
                 }
                 else
                 {
                     sscanf(line, "f %d %d %d",
-                           &face->vertex_indices[0],
-                           &face->vertex_indices[1],
-                           &face->vertex_indices[2]);
+                           &face[face_i].vertex_indices[0],
+                           &face[face_i].vertex_indices[1],
+                           &face[face_i].vertex_indices[2]);
                     face->n_face = 3;
                 }
             }
-            face->texture_index = texture_index;
-            strcat(face->texture_name, texture_name);
-            face_nb++;
-            list_pushback_face(&face_list, face);
+            face[face_i].texture_index = texture_index;
+            strcat(face[face_i].texture_name, texture_name);
+            face_i++;
         }
     }
     printf("%s", "READ DONE\n");
+    scop->vertices = vertex;
+    scop->normal = normal;
+    scop->texture = texture;
+    //print_array_vertex(scop->vertices, scop->vertex_nb);
+    //list_to_array(scop, vertex);
+    //list_to_array_texture(scop, textur_list);
+    //list_to_array_normal(scop, normal_list);
 
-    scop->size = vertex_nb;
-    scop->textur_nb = texture_nb;
-    scop->normal_nb = normal_nb;
-    scop->face_nb = face_nb - 1;
-    list_to_array(scop, vertex_list);
-    list_to_array_texture(scop, textur_list);
-    list_to_array_normal(scop, normal_list);
-    //list_to_array_face(scop, face_list);
-    set_color(&scop, face_list, materials);
-    if (!(scop->object = list_face_to_vertex(face_list, scop)))
+    set_color(&scop, face, materials);
+    if (!(scop->object = list_face_to_vertex(face, scop)))
     {
         printf("error obj\n");
         exit(1);
     }
+
     //print_vertex_face(scop->object, scop->face_nb * 3);
 
     //print_list_face_obj(scop);

@@ -211,14 +211,12 @@ void init_mat4(t_mat4 *s)
     s->mat[3][3] = 1.0f;
 }
 
-void print_array(float *a, int s)
+void print_array_vertex(t_vertex *a, int s)
 {
     int i = 0;
     while (i < s)
     {
-        if (i % 3 == 0)
-            printf("\n");
-        printf("%f ", a[i]);
+        printf("x: %f | y: %f | z: %f\n", a[i].v.x, a[i].v.y, a[i].v.z);
         i++;
     }
     printf("\n");
@@ -278,51 +276,6 @@ void print_array_face(int *a, int s)
     printf("\n");
 }
 
-void print_list_v(t_vertex *list)
-{
-    t_vertex *tmp;
-
-    tmp = list;
-    int i = 0;
-    while (tmp != NULL)
-    {
-        printf("v %f  %f  %f\n", tmp->v.x, tmp->v.y, tmp->v.z);
-        i++;
-        tmp = tmp->next;
-    }
-    printf("%d/n/n", i);
-}
-
-void print_list_vt(t_texture *list)
-{
-    t_texture *tmp;
-
-    tmp = list;
-    int i = 0;
-    while (tmp != NULL)
-    {
-        printf("vt %f  %f\n", tmp->v.x, tmp->v.y);
-        i++;
-        tmp = tmp->next;
-    }
-    printf("%d/n/n", i);
-}
-
-void print_list_vn(t_vertex *list)
-{
-    t_vertex *tmp;
-
-    tmp = list;
-    int i = 0;
-    while (tmp != NULL)
-    {
-        printf("vn %f  %f  %f\n", tmp->v.x, tmp->v.y, tmp->v.z);
-        i++;
-        tmp = tmp->next;
-    }
-    printf("%d/n/n", i);
-}
-
 // void print_list_material(t_material *list)
 // {
 //     t_material *tmp;
@@ -336,30 +289,6 @@ void print_list_vn(t_vertex *list)
 //         tmp = tmp->next;
 //     }
 // }
-
-void print_list_face(t_face *list)
-{
-    t_face *tmp;
-
-    tmp = list;
-    int i = 0;
-    while (tmp != NULL)
-    {
-        if (tmp->n_face == 4)
-        {
-            //printf("f %s %d  %d  %d  %d\n", tmp->texture_name, tmp->vertex_indices[0], tmp->vertex_indices[1], tmp->vertex_indices[2], tmp->vertex_indices[3]);
-            printf("%s | ", tmp->texture_name);
-        }
-        else
-        {
-            printf("%s | ", tmp->texture_name);
-            // printf("f %s %d  %d  %d\n", tmp->texture_name, tmp->vertex_indices[0], tmp->vertex_indices[1], tmp->vertex_indices[2]);
-        }
-        i++;
-        tmp = tmp->next;
-    }
-    printf("\n\n");
-}
 
 void print_list_face_obj(t_scop *scop)
 {
@@ -379,14 +308,4 @@ void print_list_shader(t_shader tmp)
     printf("shader file vertexShaderLight :: \n%s\n\n\n", tmp.vertexShaderLight);
     printf("shader file fragmentShaderSource :: \n%s\n\n\n", tmp.fragmentShaderSource);
     printf("shader file vertexShaderSource :: \n%s\n\n\n", tmp.vertexShaderSource);
-}
-
-void print_vertex_face(t_vertex_face *object, int size)
-{
-    for (int i = 0; i < size; i++)
-    {
-        printf("v %f %f %f\n", object[i].vertex.x, object[i].vertex.y, object[i].vertex.z);
-        printf("t %f %f\n", object[i].texture.x, object[i].texture.y);
-        printf("n %f %f %f\n\n", object[i].normal.x, object[i].normal.y, object[i].normal.z);
-    }
 }

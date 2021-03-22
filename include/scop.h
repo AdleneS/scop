@@ -50,29 +50,6 @@ typedef struct s_material
     float b;
 } t_material;
 
-typedef struct s_scop
-{
-    t_vec3 pos;
-    t_vec3 rot;
-    t_mat4 model;
-    t_mat4 view;
-    t_mat4 projection;
-    float *vertices;
-    float *colors;
-    float *texture;
-    float *normal;
-    int *faces_v;
-    int *faces_vt;
-    int *faces_vn;
-    int size;
-    int face_nb;
-    int textur_nb;
-    int normal_nb;
-    int material_nb;
-    int faceColors;
-    t_vertex_face *object;
-} t_scop;
-
 typedef struct s_mtl
 {
     char *newmtl;
@@ -83,13 +60,16 @@ typedef struct s_mtl
 typedef struct s_vertex
 {
     t_vec3 v;
-    struct s_vertex *next;
 } t_vertex;
+
+typedef struct s_normal
+{
+    t_vec3 v;
+} t_normal;
 
 typedef struct s_texture
 {
     t_vector2f v;
-    struct s_texture *next;
 } t_texture;
 
 typedef struct s_face
@@ -100,7 +80,6 @@ typedef struct s_face
     int vertex_indices[4];
     int texture_indices[4];
     int normal_indices[4];
-    struct s_face *next;
 } t_face;
 
 typedef struct s_shader
@@ -110,6 +89,30 @@ typedef struct s_shader
     char *vertexShaderLight;
     char *fragmentShaderLight;
 } t_shader;
+
+typedef struct s_scop
+{
+    t_vec3 pos;
+    t_vec3 rot;
+    t_mat4 model;
+    t_mat4 view;
+    t_mat4 projection;
+    t_vertex *vertices;
+    float *colors;
+    t_texture *texture;
+    t_normal *normal;
+    int *faces_v;
+    int *faces_vt;
+    int *faces_vn;
+    int size;
+    int vertex_nb;
+    int face_nb;
+    int texture_nb;
+    int normal_nb;
+    int material_nb;
+    int faceColors;
+    t_vertex_face *object;
+} t_scop;
 
 t_mat4 mat4x4_rotx(t_mat4 in, float angle);
 t_mat4 mat4x4_roty(t_mat4 in, float angle);
@@ -136,7 +139,7 @@ void print_array_vn(float *a, int s);
 void list_pushback(t_vertex **head, t_vertex *new);
 void print_list_v(t_vertex *list);
 void list_to_array(t_scop *scop, t_vertex *v);
-void print_array(float *a, int s);
+void print_array_vertex(t_vertex *a, int s);
 void list_pushback_face(t_face **head, t_face *new);
 void print_list_face(t_face *list);
 void list_to_array_face(t_scop *scop, t_face *f);
