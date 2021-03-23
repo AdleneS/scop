@@ -73,7 +73,7 @@ void load_file_obj(char *filename, t_scop *scop)
         process++;
         if (strncmp(line, "mtllib ", 7) == 0)
         {
-            char mtl_name[1024];
+            char mtl_name[64];
             char *path = sort_path(filename);
             sscanf(line, "mtllib %s", mtl_name);
             materials = load_file_mtl(mtl_name, scop, path);
@@ -115,6 +115,10 @@ void load_file_obj(char *filename, t_scop *scop)
             {
                 if (checkVt && checkVn)
                 {
+
+                    //////////////////////////////PREVIENT LES SEGFAULTS DES OBJETS AVEC 4 VERTEX PAR FACE//////////////////////////////////
+                    exit(1);
+                    //////////////////////////////PREVIENT LES SEGFAULTS DES OBJETS AVEC 4 VERTEX PAR FACE//////////////////////////////////
                     sscanf(line, "f %d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d",
                            &face[face_i].vertex_indices[0], &face[face_i].texture_indices[0], &face[face_i].normal_indices[0],
                            &face[face_i].vertex_indices[1], &face[face_i].texture_indices[1], &face[face_i].normal_indices[1],
@@ -198,10 +202,6 @@ void load_file_obj(char *filename, t_scop *scop)
     scop->vertices = vertex;
     scop->normal = normal;
     scop->texture = texture;
-    //print_array_vertex(scop->vertices, scop->vertex_nb);
-    //list_to_array(scop, vertex);
-    //list_to_array_texture(scop, textur_list);
-    //list_to_array_normal(scop, normal_list);
 
     set_color(&scop, face, materials);
     if (!(scop->object = list_face_to_vertex(face, scop)))
