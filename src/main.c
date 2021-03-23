@@ -129,13 +129,16 @@ int main(int argc, char *argv[])
 		GLuint lightColor = glGetUniformLocation(shaderProgram, "lightColor");
 		GLuint lightPos = glGetUniformLocation(shaderProgram, "lightPos");
 		GLuint faceColorPos = glGetUniformLocation(shaderProgram, "faceColors");
+		GLuint viewPosLoc = glGetUniformLocation(shaderProgram, "viewPos");
 
 		GLfloat objColor[3] = {1.0f, 1.0f, 1.0f};
 		GLfloat ligColor[3] = {1.0f, 1.0f, 1.0f};
+		GLfloat viewPosSpecular[3] = {scop->pos.x, scop->pos.y, scop->pos.z};
 		GLfloat ligPos[3] = {sinf(currentFrame) * 100.0f, cosf(currentFrame) * 100.0f, cosf(currentFrame) * 100.0f};
 		glUniform3fv(objectColor, 1, objColor);
 		glUniform3fv(lightColor, 1, ligColor);
 		glUniform3fv(lightPos, 1, ligPos);
+		glUniform3fv(viewPosLoc, 1, viewPosSpecular);
 		glUniform1i(faceColorPos, scop->faceColors);
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, scop->face_nb * 3);
