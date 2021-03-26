@@ -13,18 +13,13 @@ int get_size_mtl(char *path)
 
     while (fgets(line, 1024, file))
     {
-        if (strncmp(line, "# Material Count:", 17) == 0)
+        if (strncmp(line, "newmtl", 6) != 0)
         {
-            sscanf(line, "# Material Count: %d", &texture_nb);
-            return texture_nb;
-        }
-        if (strncmp(line, "#", 1) != 0)
-        {
-            return 0;
+            texture_nb++;
         }
     }
     fclose(file);
-    return 0;
+    return texture_nb;
 }
 
 t_material *load_file_mtl(char *mtl_name, t_scop *scop, char *path)
