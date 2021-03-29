@@ -23,7 +23,7 @@ void file_obj_size(char *filename, t_scop *scop)
         if (strncmp(line, "vn ", 3) == 0)
             normal_nb++;
         if (strncmp(line, "f ", 2) == 0)
-            face_nb++;
+            count_char_in_string(line, ' ') >= 4 ? face_nb += 2 : face_nb++;
     }
     scop->face_nb = face_nb;
     scop->normal_nb = normal_nb;
@@ -117,7 +117,7 @@ void load_file_obj(char *filename, t_scop *scop)
                 {
 
                     //////////////////////////////PREVIENT LES SEGFAULTS DES OBJETS AVEC 4 VERTEX PAR FACE//////////////////////////////////
-                    exit(1);
+                    //exit(1);
                     //////////////////////////////PREVIENT LES SEGFAULTS DES OBJETS AVEC 4 VERTEX PAR FACE//////////////////////////////////
                     sscanf(line, "f %d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d",
                            &face[face_i].vertex_indices[0], &face[face_i].texture_indices[0], &face[face_i].normal_indices[0],
@@ -125,7 +125,6 @@ void load_file_obj(char *filename, t_scop *scop)
                            &face[face_i].vertex_indices[2], &face[face_i].texture_indices[2], &face[face_i].normal_indices[2],
                            &face[face_i].vertex_indices[3], &face[face_i].texture_indices[3], &face[face_i].normal_indices[3]);
                     face[face_i].n_face = 4;
-                    face_i++;
                 }
                 else if (checkVt)
                 {
@@ -135,7 +134,6 @@ void load_file_obj(char *filename, t_scop *scop)
                            &face[face_i].vertex_indices[2], &face[face_i].texture_indices[2],
                            &face[face_i].vertex_indices[3], &face[face_i].texture_indices[3]);
                     face[face_i].n_face = 4;
-                    face_i++;
                 }
                 else if (checkVn)
                 {
@@ -145,7 +143,6 @@ void load_file_obj(char *filename, t_scop *scop)
                            &face[face_i].vertex_indices[2], &face[face_i].normal_indices[2],
                            &face[face_i].vertex_indices[3], &face[face_i].normal_indices[3]);
                     face[face_i].n_face = 4;
-                    face_i++;
                 }
                 else
                 {
@@ -155,8 +152,22 @@ void load_file_obj(char *filename, t_scop *scop)
                            &face[face_i].vertex_indices[2],
                            &face[face_i].vertex_indices[3]);
                     face[face_i].n_face = 4;
-                    face_i++;
                 }
+
+                face[face_i + 1].vertex_indices[0] = face[face_i].vertex_indices[2];
+                face[face_i + 1].vertex_indices[1] = face[face_i].vertex_indices[3];
+                face[face_i + 1].vertex_indices[2] = face[face_i].vertex_indices[0];
+
+                face[face_i + 1].texture_indices[0] = face[face_i].texture_indices[2];
+                face[face_i + 1].texture_indices[1] = face[face_i].texture_indices[3];
+                face[face_i + 1].texture_indices[2] = face[face_i].texture_indices[0];
+
+                face[face_i + 1].normal_indices[0] = face[face_i].normal_indices[2];
+                face[face_i + 1].normal_indices[1] = face[face_i].normal_indices[3];
+                face[face_i + 1].normal_indices[2] = face[face_i].normal_indices[0];
+                face[face_i].texture_index = texture_index;
+                strcat(face[face_i].texture_name, texture_name);
+                face_i++;
             }
             else
             {
