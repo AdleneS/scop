@@ -73,3 +73,34 @@ void set_color(t_scop **scop, t_face *face, t_material *mat)
     }
     printf("%s", "\033[0;33m✓ \033[0;32mSET COLOR DONE\n\033[0;37m");
 }
+
+void set_color_per_face(t_scop **scop)
+{
+    float r = 0.5;
+    float g = 0.5;
+    float b = 0.5;
+    int i = 0;
+    int face_i = 0;
+    if (!((*scop)->colorsFace = (float *)(malloc(sizeof(float) * ((*scop)->face_nb) * 9))))
+        exit(1);
+    while (face_i < (*scop)->face_nb)
+    {
+
+        (*scop)->colorsFace[i] = fmod(r, 1);
+        (*scop)->colorsFace[i + 1] = fmod(g, 1);
+        (*scop)->colorsFace[i + 2] = fmod(b, 1);
+        (*scop)->colorsFace[i + 3] = fmod(r, 1);
+        (*scop)->colorsFace[i + 4] = fmod(g, 1);
+        (*scop)->colorsFace[i + 5] = fmod(b, 1);
+        (*scop)->colorsFace[i + 6] = fmod(r, 1);
+        (*scop)->colorsFace[i + 7] = fmod(g, 1);
+        (*scop)->colorsFace[i + 8] = fmod(b, 1);
+
+        r += 0.02;
+        g += 0.05;
+        b += 0.08;
+        i += 9;
+        face_i++;
+    }
+    printf("%s", "\033[0;33m✓ \033[0;32mSET COLOR DONE\n\033[0;37m");
+}

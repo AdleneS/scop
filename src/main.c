@@ -29,12 +29,6 @@ int main(int argc, char *argv[])
 	{
 		load_file_obj(argv[1], scop);
 	}
-	//print_array(scop->colors, scop->face_nb * 9);
-	//print_vertex_face(scop->object, scop->face_nb * 3);
-	//print_vertex_face(scop->object, );
-	//print_array_face(scop->faces, scop->face_nb * 3);
-	//print_array(scop->vertices, scop->size * 6);
-	//print_array_vn(scop->normal, scop->normal_nb * 3);
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
@@ -50,14 +44,14 @@ int main(int argc, char *argv[])
 
 	//Init Shaders and compile it
 	unsigned int shaderProgram = compile_shader_test(shader.vertexShaderSource, shader.fragmentShaderSource);
-	//unsigned int shaderProgramLight = compile_shader_test(shader.vertexShaderLight, shader.fragmentShaderLight);
 
 	glUseProgram(shaderProgram);
 
-	unsigned int VAO, VBO, COLORS;
+	unsigned int VAO, VBO, COLORS, COLORSFACE;
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &COLORS);
+	glGenBuffers(1, &COLORSFACE);
 	// 1. bind Vertex Array Object
 	glBindVertexArray(VAO);
 	// 2. copy our vertices array in a buffer for OpenGL to use
@@ -71,31 +65,18 @@ int main(int argc, char *argv[])
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(t_vertex_face), (void *)offsetof(t_vertex_face, normal));
 
-	printf("\n%d | %d \n", scop->vertex_nb, scop->face_nb);
-	// 3. then set our vertex attributes pointers
-
-	// Activate the model's color Buffer Object
 	glBindBuffer(GL_ARRAY_BUFFER, COLORS);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (scop->face_nb * 9), scop->colors, GL_STATIC_DRAW);
-
 	glEnableVertexAttribArray(3);
 	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
 
-	// Activate the model's color Buffer Object
-	// Bind the color Buffer Object to the 'a_Color' shader variable
-
-	//unsigned int lightVAO;
-	//glGenVertexArrays(1, &lightVAO);
-	//glBindVertexArray(lightVAO);
-	//// we only need to bind to the VBO, the container's VBO's data already contains the data.
-	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	//// set the vertex attribute
-	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-	//glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, COLORSFACE);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (scop->face_nb * 9), scop->colorsFace, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(4);
+	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
-	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //Polygon Mode wireframe
 	glDepthFunc(GL_LESS);
 	while (!glfwWindowShouldClose(window))
 	{

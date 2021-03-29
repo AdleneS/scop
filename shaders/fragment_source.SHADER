@@ -4,6 +4,7 @@ out vec4 FragColor;
 in vec3 Normal;
 in vec3 FragPos;
 in vec3 ourColor;
+in vec3 faceColor;
 in vec2 UV;
 
 uniform vec3 lightPos; 
@@ -37,6 +38,11 @@ void main()
     vec3 result = (ambient + diffuse + specular) * objectColor;
     if (faceColors == 1){
      result *= ourColor;
+     FragColor = vec4(result, 1.0);
+     return ;
+    }
+    if (faceColors == 2){
+     result *= faceColor;
      FragColor = vec4(result, 1.0);
      return ;
     }

@@ -99,6 +99,7 @@ typedef struct s_scop
     t_mat4 projection;
     t_vertex *vertices;
     float *colors;
+    float *colorsFace;
     t_texture *texture;
     t_normal *normal;
     int *faces_v;
@@ -169,5 +170,6 @@ void set_color(t_scop **scop, t_face *face, t_material *mat);
 GLuint loadTex(const char *imagePath);
 void list_pushback_mat(t_material **head, t_material *new);
 void print_list_material(t_material *list);
+void set_color_per_face(t_scop **scop);
 
 #endif

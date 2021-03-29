@@ -28,11 +28,22 @@ void input_key(t_scop *scop, GLFWwindow *window)
 		scop->pos.y += 0.5;
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 		scop->pos.y -= 0.5;
+	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //Polygon Mode wireframe
+	if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //Polygon Mode wireframe
+
 	static int oldState = GLFW_PRESS;
 	int newState = glfwGetKey(window, GLFW_KEY_LEFT_ALT);
 	if (newState == GLFW_PRESS && oldState == GLFW_RELEASE)
 	{
-		scop->faceColors = !scop->faceColors;
+		printf("%d\n", scop->faceColors);
+		if (scop->faceColors == 0)
+			scop->faceColors = 1;
+		else if (scop->faceColors == 1)
+			scop->faceColors = 2;
+		else if (scop->faceColors == 2)
+			scop->faceColors = 0;
 	}
 	oldState = newState;
 

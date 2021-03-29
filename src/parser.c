@@ -217,29 +217,13 @@ void load_file_obj(char *filename, t_scop *scop)
     scop->texture = texture;
 
     set_color(&scop, face, materials);
+    set_color_per_face(&scop);
     free(materials);
     if (!(scop->object = list_face_to_vertex(face, scop)))
     {
         printf("error obj\n");
         exit(1);
     }
-
-    //print_vertex_face(scop->object, scop->face_nb * 3);
-
-    //print_list_face_obj(scop);
-
-    // print_array(scop->vertices, scop->size * 3);
-    // print_array_vt(scop->texture, scop->textur_nb * 2);
-    // print_array_vn(scop->normal, scop->normal_nb * 3);
-
-    //print_array_face(scop->faces_v, scop->face_nb * 3);
-    //print_array_face_vt(scop->faces_vt, scop->textur_nb * 2);
-    //print_array_face(scop->faces_vn, scop->face_nb * 3);
-
-    //print_list_v(vertex_list);
-    //print_list_vt(textur_list);
-    //print_list_vn(normal_list);
-    //print_list_face(face_list);
     free(vertex);
     free(face);
     free(normal);
