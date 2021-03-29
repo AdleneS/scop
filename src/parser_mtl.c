@@ -32,7 +32,7 @@ t_material *load_file_mtl(char *mtl_name, t_scop *scop, char *path)
     int i_newmtl = 0;
 
     if (!(materials = malloc(sizeof(t_material) * texture_nb)))
-        exit(1);
+        return NULL;
     if (!(file = fopen(path, "r")))
     {
         printf("error testmtl\n");

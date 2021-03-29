@@ -76,7 +76,9 @@ void load_file_obj(char *filename, t_scop *scop)
             char mtl_name[64];
             char *path = sort_path(filename);
             sscanf(line, "mtllib %s", mtl_name);
-            materials = load_file_mtl(mtl_name, scop, path);
+            if (!(materials = load_file_mtl(mtl_name, scop, path)))
+                exit(1);
+            free(path);
         }
 
         if (strncmp(line, "v ", 2) == 0)
@@ -215,6 +217,7 @@ void load_file_obj(char *filename, t_scop *scop)
     scop->texture = texture;
 
     set_color(&scop, face, materials);
+    free(materials);
     if (!(scop->object = list_face_to_vertex(face, scop)))
     {
         printf("error obj\n");
@@ -237,5 +240,9 @@ void load_file_obj(char *filename, t_scop *scop)
     //print_list_vt(textur_list);
     //print_list_vn(normal_list);
     //print_list_face(face_list);
+    free(vertex);
+    free(face);
+    free(normal);
+    free(texture);
     fclose(file);
 }

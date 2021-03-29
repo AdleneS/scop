@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
 	GLFWwindow *window = glfwCreateWindow(1920, 1080, "SCOP", NULL, NULL); // Windowed
 	glfwMakeContextCurrent(window);
 	gl3wInit();
-	GLint tex = loadTex("./textures/bedu.jpg");
+	GLint tex = loadTex("./textures/marble.jpg");
 
 	//Init Shaders and compile it
 	unsigned int shaderProgram = compile_shader_test(shader.vertexShaderSource, shader.fragmentShaderSource);
@@ -161,5 +161,9 @@ int main(int argc, char *argv[])
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &COLORS);
+	glDeleteProgram(shaderProgram);
 	glfwTerminate();
 }

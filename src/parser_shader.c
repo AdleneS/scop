@@ -17,7 +17,7 @@ char *sort_file_shader(char *_path)
 		buffer[length] = '\0';
 		fclose(f);
 	}
-	return strdup(buffer);
+	return (buffer);
 }
 
 t_shader read_path()
