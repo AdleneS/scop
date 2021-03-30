@@ -22,6 +22,7 @@ GLuint loadTex(const char *imagePath)
     else
     {
         printf("Failed to load texture\n");
+        return 0;
     }
     stbi_image_free(data);
     return texture;

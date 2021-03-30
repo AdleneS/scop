@@ -14,6 +14,7 @@ t_scop *init_struct()
 	scop->rot.y = 0;
 	scop->rot.z = 0;
 	scop->faceColors = 0;
+	scop->lightStop = 0;
 	init_mat4(&scop->model);
 	init_mat4(&scop->view);
 	mat4x4_perspective(&scop->projection, 45.0, 1920.0f / 1080.0f, 0.1f, 5000.0f);
@@ -40,9 +41,10 @@ int main(int argc, char *argv[])
 	GLFWwindow *window = glfwCreateWindow(1920, 1080, "SCOP", NULL, NULL); // Windowed
 	glfwMakeContextCurrent(window);
 	gl3wInit();
-	GLint tex = loadTex("./textures/marble.jpg");
+	GLint tex;
+	if (!(tex = loadTex("./textures/marble.jpg")))
+		exit(1);
 
-	//Init Shaders and compile it
 	unsigned int shaderProgram = compile_shader_test(shader.vertexShaderSource, shader.fragmentShaderSource);
 
 	glUseProgram(shaderProgram);
@@ -52,9 +54,9 @@ int main(int argc, char *argv[])
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &COLORS);
 	glGenBuffers(1, &COLORSFACE);
-	// 1. bind Vertex Array Object
+
 	glBindVertexArray(VAO);
-	// 2. copy our vertices array in a buffer for OpenGL to use
+
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(t_vertex_face) * scop->face_nb * 3, scop->object, GL_STATIC_DRAW);
 
@@ -115,7 +117,15 @@ int main(int argc, char *argv[])
 		GLfloat objColor[3] = {1.0f, 1.0f, 1.0f};
 		GLfloat ligColor[3] = {1.0f, 1.0f, 1.0f};
 		GLfloat viewPosSpecular[3] = {scop->pos.x, scop->pos.y, scop->pos.z};
-		GLfloat ligPos[3] = {sinf(currentFrame) * 100.0f, cosf(currentFrame) * 100.0f, cosf(currentFrame) * 100.0f};
+		GLfloat ligPos[3];
+		if (scop->lightStop == 0)
+		{
+
+			ligPos[0] = sinf(currentFrame) * 1000.0f;
+			ligPos[1] = cosf(currentFrame) * 1000.0f;
+			ligPos[2] = cosf(currentFrame) * 1000.0f;
+		}
+
 		glUniform3fv(objectColor, 1, objColor);
 		glUniform3fv(lightColor, 1, ligColor);
 		glUniform3fv(lightPos, 1, ligPos);

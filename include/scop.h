@@ -112,6 +112,7 @@ typedef struct s_scop
     int normal_nb;
     int material_nb;
     int faceColors;
+    unsigned short int lightStop;
     t_vertex_face *object;
 } t_scop;
 

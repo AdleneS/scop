@@ -44,7 +44,7 @@ t_material *load_file_mtl(char *mtl_name, t_scop *scop, char *path)
         {
             sscanf(line, "newmtl %s", &materials[i_newmtl].texture_name[0]);
         }
-        if (strncmp(line, "Kd", 2) == 0)
+        if (strncmp(line, "Kd ", 3) == 0)
         {
             sscanf(line, "Kd %f %f %f", &materials[i_newmtl].r, &materials[i_newmtl].g, &materials[i_newmtl].b);
             i_newmtl++;
