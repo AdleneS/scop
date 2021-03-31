@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
 	glfwMakeContextCurrent(window);
 	gl3wInit();
 	GLint tex;
-	if (!(tex = loadTex("./textures/marble.jpg")))
+	if (!(tex = loadTex("./textures/chat.jpg")))
 		exit(1);
 
 	unsigned int shaderProgram = compile_shader_test(shader.vertexShaderSource, shader.fragmentShaderSource);
@@ -138,21 +138,6 @@ int main(int argc, char *argv[])
 		glUniform1i(faceColorPos, scop->faceColors);
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, scop->face_nb * 3);
-
-		//glUseProgram(shaderProgramLight);
-		// t_mat4 lModel;
-
-		// init_mat4(&lModel);
-		// viewLoc = glGetUniformLocation(shaderProgramLight, "view");
-		// projectionLoc = glGetUniformLocation(shaderProgramLight, "projection");
-		// lModel = v_add((t_vec3){ligPos[0], ligPos[1], ligPos[2], 1.0f});
-		//glDrawElements(GL_TRIANGLES, scop->face_nb * 3, GL_UNSIGNED_INT, 0);
-		// glDrawArrays(GL_TRIANGLES, 0, scop->face_nb * 3);
-
-		// modelLoc = glGetUniformLocation(shaderProgramLight, "model");
-		// glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &lModel.mat[0][0]);
-		// glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &scop->view.mat[0][0]);
-		// glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &scop->projection.mat[0][0]);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

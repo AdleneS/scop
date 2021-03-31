@@ -27,6 +27,24 @@ t_vertex_face *list_face_to_vertex(t_face *face, t_scop *scop)
                 object[j].texture.x = scop->texture[(face[face_i].texture_indices[i] - 1)].v.x;
                 object[j].texture.y = scop->texture[(face[face_i].texture_indices[i] - 1)].v.y;
             }
+            else
+            {
+                if (i == 0)
+                {
+                    object[j].texture.x = 1.0;
+                    object[j].texture.y = 1.0;
+                }
+                if (i == 1)
+                {
+                    object[j].texture.x = 0.0;
+                    object[j].texture.y = 1.0;
+                }
+                if (i == 2)
+                {
+                    object[j].texture.x = 1.0;
+                    object[j].texture.y = 0.0;
+                }
+            }
             if (scop->normal_nb)
             {
                 if (face[face_i].normal_indices[i] > scop->normal_nb)
