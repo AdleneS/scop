@@ -29,7 +29,6 @@ unsigned int compile_shader_test(char *vertexSource, char *fragmentSource)
 	unsigned int shaderProgram;
 	shaderProgram = glCreateProgram();
 
-	//Attach shaders
 	glAttachShader(shaderProgram, vertexShader);
 	glAttachShader(shaderProgram, fragmentShader);
 

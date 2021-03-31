@@ -25,6 +25,11 @@ void file_obj_size(char *filename, t_scop *scop)
         if (strncmp(line, "f ", 2) == 0)
             count_char_in_string(line, ' ') >= 4 ? face_nb += 2 : face_nb++;
     }
+    if (!vertex_nb || !face_nb)
+    {
+        printf("\033[0;33m✖ \033[0;31mObject file must contain at least vertices and faces\n\033[0;37m");
+        exit(1);
+    }
     scop->face_nb = face_nb;
     scop->normal_nb = normal_nb;
     scop->vertex_nb = vertex_nb;
@@ -72,7 +77,7 @@ void load_file_obj(char *filename, t_scop *scop)
             char *path;
             if (!(path = sort_path(filename)))
                 exit(1);
-            sscanf(line, "mtllib %s", mtl_name);
+            sscanf(line, "mtllib %63s", mtl_name);
             if (!(materials = load_file_mtl(mtl_name, scop, path)))
                 exit(1);
             free(path);
@@ -85,13 +90,21 @@ void load_file_obj(char *filename, t_scop *scop)
                 checkVn = 0;
                 checkVt = 0;
             }
-            sscanf(line, "v %f %f %f", &vertex[vertex_i].v.x, &vertex[vertex_i].v.y, &vertex[vertex_i].v.z);
+            if (sscanf(line, "v %f %f %f", &vertex[vertex_i].v.x, &vertex[vertex_i].v.y, &vertex[vertex_i].v.z) != 3)
+            {
+                printf("Invalid vertex\n");
+                exit(1);
+            }
             vertex_i++;
         }
 
         if (strncmp(line, "vt ", 3) == 0)
         {
-            sscanf(line, "vt %f %f", &texture[texture_i].v.x, &texture[texture_i].v.y);
+            if (sscanf(line, "vt %f %f", &texture[texture_i].v.x, &texture[texture_i].v.y) != 2)
+            {
+                printf("Invalid texture coordonate\n");
+                exit(1);
+            }
             texture_i++;
             checkVt = 1;
         }
@@ -99,14 +112,18 @@ void load_file_obj(char *filename, t_scop *scop)
         if (strncmp(line, "vn ", 3) == 0)
         {
 
-            sscanf(line, "vn %f %f %f", &normal[normal_i].v.x, &normal[normal_i].v.y, &normal[normal_i].v.z);
+            if (sscanf(line, "vn %f %f %f", &normal[normal_i].v.x, &normal[normal_i].v.y, &normal[normal_i].v.z) != 3)
+            {
+                printf("Invalid normal\n");
+                exit(1);
+            }
             normal_i++;
             checkVt = 1;
             checkVn = 1;
         }
         if (strncmp(line, "usemtl", 6) == 0)
         {
-            sscanf(line, "usemtl %s", &texture_name[0]);
+            sscanf(line, "usemtl %31s", &texture_name[0]);
             texture_index++;
         }
         if (strncmp(line, "f ", 2) == 0)
@@ -115,38 +132,54 @@ void load_file_obj(char *filename, t_scop *scop)
             {
                 if (checkVt && checkVn)
                 {
-                    sscanf(line, "f %d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d",
-                           &face[face_i].vertex_indices[0], &face[face_i].texture_indices[0], &face[face_i].normal_indices[0],
-                           &face[face_i].vertex_indices[1], &face[face_i].texture_indices[1], &face[face_i].normal_indices[1],
-                           &face[face_i].vertex_indices[2], &face[face_i].texture_indices[2], &face[face_i].normal_indices[2],
-                           &face[face_i].vertex_indices[3], &face[face_i].texture_indices[3], &face[face_i].normal_indices[3]);
+                    if (sscanf(line, "f %d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d",
+                               &face[face_i].vertex_indices[0], &face[face_i].texture_indices[0], &face[face_i].normal_indices[0],
+                               &face[face_i].vertex_indices[1], &face[face_i].texture_indices[1], &face[face_i].normal_indices[1],
+                               &face[face_i].vertex_indices[2], &face[face_i].texture_indices[2], &face[face_i].normal_indices[2],
+                               &face[face_i].vertex_indices[3], &face[face_i].texture_indices[3], &face[face_i].normal_indices[3]) != 12)
+                    {
+                        printf("Invalid face\n");
+                        exit(1);
+                    }
                     face[face_i].n_face = 4;
                 }
                 else if (checkVt)
                 {
-                    sscanf(line, "f %d/%d %d/%d %d/%d %d/%d",
-                           &face[face_i].vertex_indices[0], &face[face_i].texture_indices[0],
-                           &face[face_i].vertex_indices[1], &face[face_i].texture_indices[1],
-                           &face[face_i].vertex_indices[2], &face[face_i].texture_indices[2],
-                           &face[face_i].vertex_indices[3], &face[face_i].texture_indices[3]);
+                    if (sscanf(line, "f %d/%d %d/%d %d/%d %d/%d",
+                               &face[face_i].vertex_indices[0], &face[face_i].texture_indices[0],
+                               &face[face_i].vertex_indices[1], &face[face_i].texture_indices[1],
+                               &face[face_i].vertex_indices[2], &face[face_i].texture_indices[2],
+                               &face[face_i].vertex_indices[3], &face[face_i].texture_indices[3]) != 8)
+                    {
+                        printf("Invalid face\n");
+                        exit(1);
+                    }
                     face[face_i].n_face = 4;
                 }
                 else if (checkVn)
                 {
-                    sscanf(line, "f %d/%d %d/%d %d/%d %d/%d",
-                           &face[face_i].vertex_indices[0], &face[face_i].normal_indices[0],
-                           &face[face_i].vertex_indices[1], &face[face_i].normal_indices[1],
-                           &face[face_i].vertex_indices[2], &face[face_i].normal_indices[2],
-                           &face[face_i].vertex_indices[3], &face[face_i].normal_indices[3]);
+                    if (sscanf(line, "f %d/%d %d/%d %d/%d %d/%d",
+                               &face[face_i].vertex_indices[0], &face[face_i].normal_indices[0],
+                               &face[face_i].vertex_indices[1], &face[face_i].normal_indices[1],
+                               &face[face_i].vertex_indices[2], &face[face_i].normal_indices[2],
+                               &face[face_i].vertex_indices[3], &face[face_i].normal_indices[3]) != 8)
+                    {
+                        printf("Invalid face\n");
+                        exit(1);
+                    }
                     face[face_i].n_face = 4;
                 }
                 else
                 {
-                    sscanf(line, "f %d %d %d %d",
-                           &face[face_i].vertex_indices[0],
-                           &face[face_i].vertex_indices[1],
-                           &face[face_i].vertex_indices[2],
-                           &face[face_i].vertex_indices[3]);
+                    if (sscanf(line, "f %d %d %d %d",
+                               &face[face_i].vertex_indices[0],
+                               &face[face_i].vertex_indices[1],
+                               &face[face_i].vertex_indices[2],
+                               &face[face_i].vertex_indices[3]) != 4)
+                    {
+                        printf("Invalid face\n");
+                        exit(1);
+                    }
                     face[face_i].n_face = 4;
                 }
 
@@ -171,41 +204,57 @@ void load_file_obj(char *filename, t_scop *scop)
                     face[face_i + 1].normal_indices[2] = face[face_i].normal_indices[0];
                 }
                 face[face_i].texture_index = texture_index;
-                strcat(face[face_i].texture_name, texture_name);
+                strcpy(face[face_i].texture_name, texture_name);
                 face_i++;
             }
             else
             {
                 if (checkVt && checkVn)
                 {
-                    sscanf(line, "f %d/%d/%d %d/%d/%d %d/%d/%d",
-                           &face[face_i].vertex_indices[0], &face[face_i].texture_indices[0], &face[face_i].normal_indices[0],
-                           &face[face_i].vertex_indices[1], &face[face_i].texture_indices[1], &face[face_i].normal_indices[1],
-                           &face[face_i].vertex_indices[2], &face[face_i].texture_indices[2], &face[face_i].normal_indices[2]);
+                    if (sscanf(line, "f %d/%d/%d %d/%d/%d %d/%d/%d",
+                               &face[face_i].vertex_indices[0], &face[face_i].texture_indices[0], &face[face_i].normal_indices[0],
+                               &face[face_i].vertex_indices[1], &face[face_i].texture_indices[1], &face[face_i].normal_indices[1],
+                               &face[face_i].vertex_indices[2], &face[face_i].texture_indices[2], &face[face_i].normal_indices[2]) != 9)
+                    {
+                        printf("Invalid face\n");
+                        exit(1);
+                    }
                     face->n_face = 3;
                 }
                 else if (checkVt)
                 {
-                    sscanf(line, "f %d/%d %d/%d %d/%d",
-                           &face[face_i].vertex_indices[0], &face[face_i].texture_indices[0],
-                           &face[face_i].vertex_indices[1], &face[face_i].texture_indices[1],
-                           &face[face_i].vertex_indices[2], &face[face_i].texture_indices[2]);
+                    if (sscanf(line, "f %d/%d %d/%d %d/%d",
+                               &face[face_i].vertex_indices[0], &face[face_i].texture_indices[0],
+                               &face[face_i].vertex_indices[1], &face[face_i].texture_indices[1],
+                               &face[face_i].vertex_indices[2], &face[face_i].texture_indices[2]) != 6)
+                    {
+                        printf("Invalid face\n");
+                        exit(1);
+                    }
                     face->n_face = 3;
                 }
                 else if (checkVn)
                 {
-                    sscanf(line, "f %d/%d %d/%d %d/%d",
-                           &face[face_i].vertex_indices[0], &face[face_i].normal_indices[0],
-                           &face[face_i].vertex_indices[1], &face[face_i].normal_indices[1],
-                           &face[face_i].vertex_indices[2], &face[face_i].normal_indices[2]);
+                    if (sscanf(line, "f %d/%d %d/%d %d/%d",
+                               &face[face_i].vertex_indices[0], &face[face_i].normal_indices[0],
+                               &face[face_i].vertex_indices[1], &face[face_i].normal_indices[1],
+                               &face[face_i].vertex_indices[2], &face[face_i].normal_indices[2]) != 6)
+                    {
+                        printf("Invalid face\n");
+                        exit(1);
+                    }
                     face->n_face = 3;
                 }
                 else if (count_char_in_string(line, '/') == 0)
                 {
-                    sscanf(line, "f %d %d %d",
-                           &face[face_i].vertex_indices[0],
-                           &face[face_i].vertex_indices[1],
-                           &face[face_i].vertex_indices[2]);
+                    if (sscanf(line, "f %d %d %d",
+                               &face[face_i].vertex_indices[0],
+                               &face[face_i].vertex_indices[1],
+                               &face[face_i].vertex_indices[2]) != 3)
+                    {
+                        printf("Invalid face\n");
+                        exit(1);
+                    }
                     face->n_face = 3;
                 }
                 else

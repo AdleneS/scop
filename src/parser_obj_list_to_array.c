@@ -18,14 +18,19 @@ t_vertex_face *list_face_to_vertex(t_face *face, t_scop *scop)
                 object[j].vertex.y = scop->vertices[(face[face_i].vertex_indices[i] - 1)].v.y;
                 object[j].vertex.z = scop->vertices[(face[face_i].vertex_indices[i] - 1)].v.z;
             }
-            if (scop->texture_nb && (face[face_i].texture_indices[i]) <= scop->texture_nb)
+            else
+                exit(1);
+            if (scop->texture_nb)
             {
+                if (face[face_i].texture_indices[i] > scop->texture_nb)
+                    exit(1);
                 object[j].texture.x = scop->texture[(face[face_i].texture_indices[i] - 1)].v.x;
                 object[j].texture.y = scop->texture[(face[face_i].texture_indices[i] - 1)].v.y;
             }
-
-            if (scop->normal_nb && (face[face_i].normal_indices[i]) <= scop->normal_nb)
+            if (scop->normal_nb)
             {
+                if (face[face_i].normal_indices[i] > scop->normal_nb)
+                    exit(1);
                 object[j].normal.x = scop->normal[(face[face_i].normal_indices[i] - 1)].v.x;
                 object[j].normal.y = scop->normal[(face[face_i].normal_indices[i] - 1)].v.y;
                 object[j].normal.z = scop->normal[(face[face_i].normal_indices[i] - 1)].v.z;
@@ -57,7 +62,6 @@ void set_color(t_scop **scop, t_face *face, t_material *mat)
 
             for (int j = 0; j < (*scop)->material_nb; j++)
             {
-                //printf("%s | %s\n", mat[j].texture_name, face[face_i].texture_name);
                 if (strcmp(mat[j].texture_name, face[face_i].texture_name) == 0)
                 {
                     r = mat[j].r;

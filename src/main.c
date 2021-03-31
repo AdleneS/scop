@@ -30,6 +30,11 @@ int main(int argc, char *argv[])
 	{
 		load_file_obj(argv[1], scop);
 	}
+	else
+	{
+		printf("Usage: ./scop [obj]\n");
+		return 0;
+	}
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);

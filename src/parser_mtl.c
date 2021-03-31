@@ -35,18 +35,22 @@ t_material *load_file_mtl(char *mtl_name, t_scop *scop, char *path)
         return NULL;
     if (!(file = fopen(path, "r")))
     {
-        printf("error testmtl\n");
+        printf("Program can not find mtl file\n");
         return NULL;
     }
     while (fgets(line, 1024, file))
     {
         if (strncmp(line, "newmtl", 6) == 0)
         {
-            sscanf(line, "newmtl %s", &materials[i_newmtl].texture_name[0]);
+            sscanf(line, "newmtl %31s", &materials[i_newmtl].texture_name[0]);
         }
         if (strncmp(line, "Kd ", 3) == 0)
         {
-            sscanf(line, "Kd %f %f %f", &materials[i_newmtl].r, &materials[i_newmtl].g, &materials[i_newmtl].b);
+            if (sscanf(line, "Kd %f %f %f", &materials[i_newmtl].r, &materials[i_newmtl].g, &materials[i_newmtl].b) != 3)
+            {
+                printf("\033[0;33m✖ \033[0;31mInvalid Kd\n\033[0;37m");
+                exit(1);
+            }
             i_newmtl++;
         }
     }
