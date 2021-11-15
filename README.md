@@ -1,6 +1,7 @@
 # ft_vox
 
-Objectives
+## Objectives
+
 This project aims to confront you to a graphic project that will be extremely demanding
 in terms of optimization. You will have to study the characteristics of the voxel worlds,
 and use them along your infographics knowledge to display a lot of elements on screen.
